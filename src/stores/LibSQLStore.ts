@@ -2,6 +2,10 @@ import { BaseVectorStore, EmbeddableDocumentSchema, BaseVectorStoreArgsSchema, D
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
 
+const DEFAULT_TABLE_NAME = "embeddings";
+const DEFAULT_DATABASE_URL = "file:data/raglite.db";
+const DEFAULT_DIMENSIONS = 1536;
+
 /**
  * The schema of the document record
  */
@@ -60,12 +64,9 @@ export type LibSQLStoreArgs = z.infer<typeof LibSQLStoreArgsSchema>;
  * The options for the LibSQLStore class.
  */
 export const LibSQLStoreOptionsSchema = LibSQLStoreArgsSchema.extend({
-  dimensions: z.coerce.number().default(1536),
-  tableName: z
-    .string()
-    .default("embeddings")
-    .transform((val) => val.toLowerCase()),
-  url: z.string().default("file:data/raglite.db"),
+  dimensions: z.coerce.number().default(DEFAULT_DIMENSIONS),
+  tableName: z.string().default(DEFAULT_TABLE_NAME),
+  url: z.string().default(DEFAULT_DATABASE_URL),
 });
 
 export type LibSQLStoreOptions = z.infer<typeof LibSQLStoreOptionsSchema>;

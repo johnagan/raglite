@@ -18,8 +18,6 @@
 npm install raglite
 ```
 
----
-
 ## Quick Start
 
 ### Basic Usage
@@ -27,26 +25,35 @@ npm install raglite
 ```ts
 import { RAGLite } from "raglite";
 
+const { OPENAI_API_KEY, DATABASE_URL } = process.env;
+
 // Initialize RAGLite
 const rag = new RAGLite({
-  // All options are optional if you use environment variables
-  apiKey: process.env.OPENAI_API_KEY, // or omit if set in .env
-  url: process.env.DATABASE_URL, // or omit if set in .env
-  tableName: "my_embeddings", // optional, default: "embeddings"
-  model: "text-embedding-3-small", // optional, default: "text-embedding-3-small"
-  dimensions: 1536, // optional, default: 1536
+  apiKey: OPENAI_API_KEY,
+  url: DATABASE_URL,
 });
 
-// Load a document from a URL, file path, Buffer, or plain text
+// Load a document from a file path
 await rag.load("path/to/document.pdf");
+
+// Load a document from a URL
+await rag.load("https://example.com/path/to/document.docx");
+
+// Load a document from text
+await rag.load("Hello, world!");
+
+// Include metadata with the document
+await rag.load("Hello, world!", {
+  metadata: {
+    source: "https://example.com/path/to/document.docx",
+  },
+});
 
 // Search for relevant chunks
 const results = await rag.search("What is retrieval-augmented generation?", 5);
 
-console.log(results);
+console.log(results); // [{ content: "...", metadata: { source: "..." } }, ...]
 ```
-
----
 
 ## API
 
@@ -54,18 +61,22 @@ console.log(results);
 
 | Option     | Type   | Default                  | Description                |
 | ---------- | ------ | ------------------------ | -------------------------- |
-| apiKey     | string | `OPENAI_API_KEY` env var | OpenAI API key             |
-| url        | string | `DATABASE_URL` env var   | SQLite/LibSQL database URL |
+| apiKey     | string |                          | OpenAI API key             |
+| url        | string | `file:data/raglite.db`   | SQLite/LibSQL database URL |
 | tableName  | string | `embeddings`             | Table name for embeddings  |
 | model      | string | `text-embedding-3-small` | OpenAI embedding model     |
 | dimensions | number | `1536`                   | Embedding vector size      |
 
-### `await rag.load(file)`
+### `rag.load(filePath|url|text|buffer, options)`
 
-- `file` (`string | Buffer`): URL, file path, Buffer, or plain text. Supports loading from remote URLs, local file paths, raw Buffers, or direct text content.
+- `filePath` (`string`): Local file path to load the document from.
+- `url` (`string`): URL to load the document from.
+- `text` (`string`): Plain text to load into the document.
+- `buffer` (`Buffer`): Raw buffer data to load into the document.
+- `options` (`object`): Options for the document.
 - Loads and embeds the document into the vector store.
 
-### `await rag.search(query, results = 3)`
+### `rag.search(query, results = 3)`
 
 - `query` (`string`): The search query.
 - `results` (`number`): Number of top results to return (default: 3).
