@@ -26,6 +26,7 @@
   "license": "MIT",
   "repository": "https://github.com/johnagan/raglite",
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "packageManager": "pnpm@10.10.0",
