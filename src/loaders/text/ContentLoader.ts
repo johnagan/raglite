@@ -1,4 +1,4 @@
-import { BaseLoader, LoaderData, LoaderInput, Metadata, Document } from "@root/core";
+import { BaseLoader, LoaderData, LoaderInput } from "@root/core";
 
 /**
  * Takes a Buffer and resolves it to an array of Documents, possibly via Docx.
