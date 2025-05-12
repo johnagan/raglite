@@ -22,21 +22,7 @@ npm install raglite
 
 ## Quick Start
 
-### 1. Set up Environment Variables (optional)
-
-Create a `.env` file in your project root with:
-
-```env
-OPENAI_API_KEY=your-openai-api-key
-DATABASE_URL=file:data/raglite.db
-```
-
-- `OPENAI_API_KEY`: Your OpenAI API key (required).
-- `DATABASE_URL`: Path or URL for your SQLite/LibSQL database (required).
-
-_You can also pass these values directly as options when instantiating `RAGLite`. Setting environment variables is optional._
-
-### 2. Basic Usage
+### Basic Usage
 
 ```ts
 import { RAGLite } from "raglite";
@@ -135,7 +121,3 @@ MIT
 ## Contributing
 
 Contributions, issues, and feature requests are welcome! Please open an issue or PR.
-
----
-
-Let me know if you want to add badges, more advanced examples, or a section on architecture!
