@@ -28,6 +28,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "packageManager": "pnpm@10.9.0",
   "dependencies": {
     "@libsql/client": "^0.15.4",
     "mammoth": "^1.6.0",
