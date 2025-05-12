@@ -1,6 +1,5 @@
 import { Transform, TransformCallback } from "stream";
-import { Document, Metadata } from "./Document";
-import fs from "fs";
+import { Document } from "./Document";
 
 export type LoaderInput = Buffer | string;
 
@@ -27,8 +26,8 @@ export class BaseLoader extends Transform {
    * @returns The transformed data
    */
   async _transform(data: LoaderData, _encoding: BufferEncoding, cb: TransformCallback) {
-    // If the data has already been transformed or the data is not supported, return it
-    if (data.documents !== undefined || !this.test(data.input)) {
+    // If the input is not supported, return it
+    if (!this.test(data)) {
       cb(null, data);
       return;
     }
@@ -42,73 +41,19 @@ export class BaseLoader extends Transform {
   }
 
   /**
-   * Load a document from a buffer
-   * @param buffer - The buffer to load the document from
-   * @param metadata - Additional metadata to be added to all documents.
-   * @returns The document
+   * Push data to the stream
+   * @param data - The data to push
    */
-  async load(input: LoaderInput, metadata: Metadata = {}): Promise<Document[]> {
-    // If the input is a string, it is a path or a URL
-    if (typeof input === "string") {
-      if (/^https?:\/\//.test(input)) {
-        return this.loadFromUrl(input, metadata);
-      } else {
-        return this.loadFromPath(input, metadata);
-      }
-    } else {
-      return this.loadFromBuffer(input, metadata);
-    }
-  }
-
-  /**
-   * Load a document from a buffer
-   * @param buffer - The buffer to load the document from
-   * @param metadata - Additional metadata to be added to all documents.
-   * @returns The document
-   */
-  async loadFromBuffer(buffer: Buffer, metadata: Metadata = {}): Promise<Document[]> {
-    return this.loadDocuments(buffer, metadata);
-  }
-
-  /**
-   * Load a document from a URL
-   * @param url - The URL to load the document from
-   * @param metadata - Additional metadata to be added to all documents.
-   * @returns The document
-   */
-  async loadFromUrl(url: string, metadata: Metadata = {}): Promise<Document[]> {
-    const response = await fetch(url);
-    const buffer = await response.arrayBuffer();
-    return this.loadFromBuffer(Buffer.from(buffer), metadata);
-  }
-
-  /**
-     * Load a document from a path
-     * @param path - The path to load the document from
-
-    * @returns The document
-     */
-  async loadFromPath(path: string, metadata: Metadata = {}): Promise<Document[]> {
-    const buffer = fs.readFileSync(path);
-    return this.loadFromBuffer(buffer, metadata);
+  push(data: LoaderData | Document) {
+    return super.push(data);
   }
 
   /**
    * Detect if a buffer is the type of document this loader can handle
-   * @param input - The input to detect
+   * @param data - The data to detect
    * @returns True if the input is a document, false otherwise
    */
-  test(input: LoaderInput): boolean {
-    throw new Error("Not implemented");
-  }
-
-  /**
-   * Load a document from a buffer
-   * @param buffer - The buffer to load the document from
-   * @param metadata - Additional metadata to be added to all documents.
-   * @returns The document
-   */
-  async loadDocuments(buffer: Buffer, metadata: Metadata = {}): Promise<Document[]> {
+  test(data: LoaderData): boolean {
     throw new Error("Not implemented");
   }
 
@@ -117,7 +62,7 @@ export class BaseLoader extends Transform {
    * @param data - The data to transform
    * @returns The transformed data
    */
-  async transform(data: LoaderData): Promise<LoaderData> {
+  async transform(data: LoaderData): Promise<void> {
     throw new Error("Not implemented");
   }
 }
