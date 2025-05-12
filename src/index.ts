@@ -26,10 +26,10 @@ export class RAGLite {
 
   /**
    * Loads a PDF file into the store.
-   * @param file - The PDF file to load.
+   * @param input - The PDF file to load.
    */
-  async load(file: LoaderInput) {
-    const docs = await load(file);
+  async load(input: LoaderInput) {
+    const docs = await load(input);
 
     if (!docs) {
       throw new Error("No document found");
