@@ -1,6 +1,6 @@
 import { LoaderData, LoaderInput, Metadata } from "@root/core";
-import * as docLoaders from "./document/index";
-import * as textLoaders from "./text/index";
+import * as docLoaders from "./document";
+import * as textLoaders from "./text";
 import { pipeline } from "stream/promises";
 import { Readable } from "stream";
 
