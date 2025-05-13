@@ -105,9 +105,6 @@ export class Pipeline {
    */
   async load(doc: LoaderDocument): Promise<LoaderDocument[]> {
 
-    // Create the input loader
-    // const reader = new TextLoader(doc);
-
     // Create the loaders
     const loaders = [
       Readable.from([doc], { objectMode: true }),
