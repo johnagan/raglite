@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "sourceMap": true,
     "module": "CommonJS",
     "moduleResolution": "node",
     "target": "ES2020",
@@ -9,10 +10,7 @@
     "types": ["vitest/globals"],
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "paths": {
-      "@root/*": ["./src/*"]
-    }
+    "rootDir": "./src"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

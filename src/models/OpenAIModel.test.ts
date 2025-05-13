@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { OpenAIModel } from "@root/models";
+import { OpenAIModel } from "./OpenAIModel";
 import { OpenAI } from "openai";
 
 const apiKey = process.env.OPENAI_API_KEY!;

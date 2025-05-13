@@ -37,15 +37,16 @@
   "dependencies": {
     "mammoth": "^1.6.0",
     "pdfjs-dist": "^5.2.133",
+    "tiktoken": "^1.0.21",
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "vite-tsconfig-paths": "^5.1.4",
     "@libsql/client": "^0.15.4",
     "@types/node": "^20.9.0",
-    "typescript": "^5.8.3",
     "dotenv": "^16.5.0",
     "openai": "^4.20.0",
+    "typescript": "^5.8.3",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.3"
   }
 }

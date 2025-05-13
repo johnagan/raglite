@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect } from "vitest";
 import { LibSQLStore, LibSQLStoreArgs } from "./LibSQLStore";
-import { OpenAIModel } from "@root/models";
+import { OpenAIModel } from "../models";
 
 // Use a test database file or in-memory for isolation
 const TEST_DB_URL = "file:data/test-database.db";

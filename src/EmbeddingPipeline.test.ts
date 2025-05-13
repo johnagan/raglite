@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { load } from "./pipeline";
+import { OpenAIModel } from "./models/OpenAIModel";
+import { EmbeddingPipeline } from "./EmbeddingPipeline";
 import { writeFile } from "fs/promises";
+import { IModel } from "./core/IModel";
 
 const TEST_INLINE_CONTENT = "Hello world";
 const TEST_DOCX_URL = "https://calibre-ebook.com/downloads/demos/demo.docx";
@@ -8,9 +10,19 @@ const TEST_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/
 
 const TEST_FILE_DIR = "/tmp";
 
-describe("load", () => {
+const apiKey = process.env.OPENAI_API_KEY!;
+
+describe("EmbeddingPipeline", () => {
+  let pipeline: EmbeddingPipeline;
+  let model: IModel;
+
+  beforeEach(() => {
+    model = new OpenAIModel({ apiKey });
+    pipeline = new EmbeddingPipeline(model);
+  });
+
   it("should load a docx file from a URL", async () => {
-    const docs = await load(TEST_DOCX_URL, { foo: "bar" });
+    const docs = await pipeline.load({ content: TEST_DOCX_URL, metadata: { foo: "bar" } });
     expect(docs).toBeDefined();
     expect(docs?.length).toBeGreaterThan(0);
     expect(docs?.[0].content).toBeDefined();
@@ -18,7 +30,7 @@ describe("load", () => {
   });
 
   it("should load a pdf file from a URL", async () => {
-    const docs = await load(TEST_PDF_URL, { foo: "bar" });
+    const docs = await pipeline.load({ content: TEST_PDF_URL, metadata: { foo: "bar" } });
     expect(docs).toBeDefined();
     expect(docs?.length).toBeGreaterThan(0);
     expect(docs?.[0].content).toBeDefined();
@@ -26,7 +38,7 @@ describe("load", () => {
   });
 
   it("should load inline text", async () => {
-    const docs = await load(TEST_INLINE_CONTENT, { foo: "bar" });
+    const docs = await pipeline.load({ content: TEST_INLINE_CONTENT, metadata: { foo: "bar" } });
     expect(docs).toBeDefined();
     expect(docs?.length).toBeGreaterThan(0);
     expect(docs?.[0].content).toBeDefined();
@@ -39,7 +51,7 @@ describe("load", () => {
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const docs = await load(buffer, { foo: "bar" });
+    const docs = await pipeline.load({ content: buffer, metadata: { foo: "bar" } });
     expect(docs).toBeDefined();
     expect(docs?.length).toBeGreaterThan(0);
     expect(docs?.[0].content).toBeDefined();
@@ -54,7 +66,7 @@ describe("load", () => {
     const filePath = `${TEST_FILE_DIR}/test.pdf`;
     await writeFile(filePath, buffer);
 
-    const docs = await load(filePath, { foo: "bar" });
+    const docs = await pipeline.load({ content: filePath, metadata: { foo: "bar" } });
     expect(docs).toBeDefined();
     expect(docs?.length).toBeGreaterThan(0);
     expect(docs?.[0].content).toBeDefined();

@@ -1,4 +1,4 @@
-import { BaseVectorStore, EmbeddableDocumentSchema, BaseVectorStoreArgsSchema, Document } from "@root/core";
+import { LoaderDocument, LoaderDocumentSchema } from "../types";
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
 
@@ -9,7 +9,7 @@ const DEFAULT_DIMENSIONS = 1536;
 /**
  * The schema of the document record
  */
-export const LibSQLDocumentSchema = EmbeddableDocumentSchema.extend({
+export const LibSQLDocumentSchema = LoaderDocumentSchema.extend({
   id: z.number().describe("The id of the document"),
   content: z.string().describe("The content of the document"),
   vector: z.preprocess((val) => {
@@ -52,7 +52,7 @@ export type NewLibSQLDocument = z.infer<typeof NewLibSQLDocumentSchema>;
 /**
  * The arguments for the LibSQLStore class.
  */
-export const LibSQLStoreArgsSchema = BaseVectorStoreArgsSchema.extend({
+export const LibSQLStoreArgsSchema = z.object({
   url: z.string().optional().describe("The URL of the database"),
   tableName: z.string().optional().describe("The name of the table"),
   dimensions: z.number().optional().describe("The dimensions of the embedding vectors"),
@@ -75,7 +75,7 @@ export type LibSQLStoreOptions = z.infer<typeof LibSQLStoreOptionsSchema>;
  * The LibSQLStore class is a class that extends the BaseVectorStore class.
  * It is used to store and retrieve embeddings from a LibSQL database.
  */
-export class LibSQLStore extends BaseVectorStore {
+export class LibSQLStore {
   options: LibSQLStoreOptions;
   client: Client;
 
@@ -84,7 +84,6 @@ export class LibSQLStore extends BaseVectorStore {
    * @param options - The options for the LibSQLStore class.
    */
   constructor(options: LibSQLStoreArgs) {
-    super(options);
     this.options = LibSQLStoreOptionsSchema.parse(options);
     this.client = createClient({ url: this.options.url });
   }
@@ -126,10 +125,9 @@ export class LibSQLStore extends BaseVectorStore {
    * @param doc - The document to add.
    * @returns The added document.
    */
-  async addDocument(doc: Document) {
-    const { content, metadata } = doc;
+  async addDocument(doc: LoaderDocument) {
+    const { content, metadata, vector } = doc;
     const { tableName } = this.options;
-    const vector = await this.model.embed(content);
 
     const result = await this.client.execute({
       args: [content, JSON.stringify(metadata), JSON.stringify(vector)],
@@ -149,12 +147,11 @@ export class LibSQLStore extends BaseVectorStore {
 
   /**
    * Searches the database for the most relevant embeddings.
-   * @param text - The text to search for.
+   * @param vectorQuery - The vector to search for.
    * @param results - The number of results to return
    * @returns The most relevant embeddings.
    */
-  async search(text: string, results = 3): Promise<LibSQLDocument[]> {
-    const vectorQuery = await this.model.embed(text);
+  async search(vectorQuery: number[], results = 3): Promise<LibSQLDocument[]> {
     const vector = JSON.stringify(vectorQuery);
     const { tableName } = this.options;
 
