@@ -1,6 +1,6 @@
 import { LibSQLStore, LibSQLStoreOptionsSchema } from "./stores/LibSQLStore";
 import { OpenAIModelOptionsSchema, OpenAIModel } from "./models/OpenAIModel";
-import type { Content, Metadata } from "./core/LoaderDocument";
+import type { Content, Metadata, IModel, IStore } from "./core";
 import { Pipeline } from "./Pipeline";
 import { z } from "zod";
 
@@ -12,8 +12,8 @@ const Store = LibSQLStore;
 
 export class RAGLite {
   pipeline: Pipeline;
-  model: OpenAIModel;
-  store: LibSQLStore;
+  model: IModel;
+  store: IStore;
 
   /**
    * The constructor for the RAGLite class.

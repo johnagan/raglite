@@ -1,5 +1,5 @@
 import { describe, beforeAll, it, expect } from "vitest";
-import { LoaderDocument } from "../core/LoaderDocument.ts";
+import type { LoaderDocument } from "../core";
 import { PdfLoader } from "./PdfLoader";
 
 export const TEST_FILE_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";

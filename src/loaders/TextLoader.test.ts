@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import type { LoaderDocument } from "../core/LoaderDocument.ts";
+import type { LoaderDocument } from "../core";
 import { TextLoader } from "./TextLoader";
 import { Buffer } from "buffer";
 import type { Stats } from "fs";

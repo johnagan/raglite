@@ -1,5 +1,5 @@
 import { encoding_for_model, TiktokenModel } from "tiktoken";
-import { IModel } from "../core/IModel";
+import type { IModel } from "../core";
 import { OpenAI } from "openai";
 import { z } from "zod";
 

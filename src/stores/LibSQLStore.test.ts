@@ -37,13 +37,13 @@ describe("LibSQLStore", () => {
     expect(inserted.content).toBe(sampleDoc.content);
     expect(inserted.metadata).toEqual(sampleDoc.metadata);
     expect(inserted.vector).toBeDefined();
-    expect(inserted.vector.length).toBeGreaterThan(0);
+    expect(inserted.vector?.length).toBeGreaterThan(0);
 
     const fetched = await store.getOne(inserted.id);
     expect(fetched.content).toBe(sampleDoc.content);
     expect(fetched.metadata).toEqual(sampleDoc.metadata);
     expect(fetched.vector).toBeDefined();
-    expect(fetched.vector.length).toBeGreaterThan(0);
+    expect(fetched.vector?.length).toBeGreaterThan(0);
   });
 
   it("should throw when getting a non-existent document", async () => {
@@ -60,7 +60,7 @@ describe("LibSQLStore", () => {
     expect(results.length).toBeGreaterThan(1);
     // The closest vector should be the first one
     expect(results[0].vector).toBeDefined();
-    expect(results[0].vector.length).toBeGreaterThan(0);
+    expect(results[0].vector?.length).toBeGreaterThan(0);
   });
 
   it("should reset the database", async () => {

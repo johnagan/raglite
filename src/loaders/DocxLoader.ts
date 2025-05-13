@@ -1,5 +1,4 @@
-import { BaseDocumentLoader, LoaderDocumentCallback } from "../core/BaseDocumentLoader";
-import { LoaderDocument } from "../core/LoaderDocument";
+import { BaseDocumentLoader, type LoaderDocumentCallback, type LoaderDocument } from "../core";
 import mammoth from "mammoth";
 
 /**

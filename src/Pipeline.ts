@@ -1,10 +1,8 @@
-import { BaseDocumentLoader, LoaderDocumentCallback } from "./core/BaseDocumentLoader";
-import { LoaderDocument } from "./core/LoaderDocument";
+import { BaseDocumentLoader, type LoaderDocumentCallback, type IModel, type LoaderDocument } from "./core";
 import { DocxLoader } from "./loaders/DocxLoader";
 import { TextLoader } from "./loaders/TextLoader";
 import { PdfLoader } from "./loaders/PdfLoader";
 import { pipeline } from "stream/promises";
-import { IModel } from "./core/IModel";
 
 /**
  * A pipeline for loading documents.

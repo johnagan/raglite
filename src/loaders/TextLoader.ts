@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, statSync } from "fs";
-import { LoaderDocument, LoaderDocumentSchema } from "../core/LoaderDocument.ts";
+import { type LoaderDocument, LoaderDocumentSchema } from "../core";
 import { Readable } from "stream";
 import { Buffer } from "buffer";
 

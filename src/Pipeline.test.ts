@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { OpenAIModel } from "./models/OpenAIModel";
 import { Pipeline } from "./Pipeline";
 import { writeFile } from "fs/promises";
-import { IModel } from "./core/IModel";
+import type { IModel } from "./core";
 
 const TEST_INLINE_CONTENT = "Hello world";
 const TEST_DOCX_URL = "https://calibre-ebook.com/downloads/demos/demo.docx";

@@ -1,5 +1,5 @@
 import { Transform, TransformOptions } from "stream";
-import { LoaderDocument, LoaderDocumentSchema } from "./LoaderDocument";
+import { type LoaderDocument, LoaderDocumentSchema } from "./LoaderDocument";
 
 export interface LoaderDocumentCallback {
   (error?: Error | null, doc?: LoaderDocument): void;

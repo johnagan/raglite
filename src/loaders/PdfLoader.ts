@@ -1,6 +1,6 @@
 import { BaseDocumentLoader, LoaderDocumentCallback } from "../core/BaseDocumentLoader";
-import { LoaderDocument } from "../core/LoaderDocument";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import type { LoaderDocument } from "../core";
 
 /**
  * Loads a PDF document and returns the text content.

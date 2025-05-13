@@ -1,4 +1,4 @@
-import { LoaderDocument, LoaderDocumentSchema } from "../core/LoaderDocument";
+import { type IStore, type LoaderDocument, LoaderDocumentSchema, MetadataSchema, VectorSchema } from "../core";
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
 
@@ -11,7 +11,6 @@ const DEFAULT_DIMENSIONS = 1536;
  */
 export const LibSQLDocumentSchema = LoaderDocumentSchema.extend({
   id: z.number().describe("The id of the document"),
-  content: z.string().describe("The content of the document"),
   vector: z.preprocess((val) => {
     try {
       if (typeof val === "string") {
@@ -30,14 +29,14 @@ export const LibSQLDocumentSchema = LoaderDocumentSchema.extend({
     } catch {
       return [];
     }
-  }, z.number().array().describe("The vector of the embedding")),
+  }, VectorSchema),
   metadata: z.preprocess((val) => {
     try {
       return typeof val === "string" ? JSON.parse(val) : val;
     } catch {
       return {};
     }
-  }, z.any().default({}).describe("The metadata of the embedding")),
+  }, MetadataSchema),
 });
 
 export type LibSQLDocument = z.infer<typeof LibSQLDocumentSchema>;
@@ -75,7 +74,7 @@ export type LibSQLStoreOptions = z.infer<typeof LibSQLStoreOptionsSchema>;
  * The LibSQLStore class is a class that extends the BaseVectorStore class.
  * It is used to store and retrieve embeddings from a LibSQL database.
  */
-export class LibSQLStore {
+export class LibSQLStore implements IStore {
   options: LibSQLStoreOptions;
   client: Client;
 

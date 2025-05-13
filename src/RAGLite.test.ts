@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { RAGLite } from "./RAGLite";
 import { OpenAIModel } from "./models/OpenAIModel";
 import { LibSQLStore } from "./stores/LibSQLStore";
 import { Pipeline } from "./Pipeline";
+import { RAGLite } from "./RAGLite";
 
 // Mock dependencies
 vi.mock("./models/OpenAIModel", async (importOriginal) => {

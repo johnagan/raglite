@@ -1,6 +1,6 @@
 import { describe, beforeAll, it, expect } from "vitest";
+import type { LoaderDocument } from "../core";
 import { DocxLoader } from "./DocxLoader";
-import { LoaderDocument } from "../core/LoaderDocument";
 
 export const TEST_FILE_URL = "https://calibre-ebook.com/downloads/demos/demo.docx";
 
