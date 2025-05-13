@@ -1,4 +1,4 @@
-import { type IStore, type LoaderDocument, LoaderDocumentSchema, MetadataSchema, VectorSchema } from "../core";
+import { type IStore, type LoaderDocument, LoaderDocumentSchema, LoaderMetadataSchema, LoaderVectorSchema } from "../core";
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
 
@@ -29,14 +29,14 @@ export const LibSQLDocumentSchema = LoaderDocumentSchema.extend({
     } catch {
       return [];
     }
-  }, VectorSchema),
+  }, LoaderVectorSchema),
   metadata: z.preprocess((val) => {
     try {
       return typeof val === "string" ? JSON.parse(val) : val;
     } catch {
       return {};
     }
-  }, MetadataSchema),
+  }, LoaderMetadataSchema),
 });
 
 export type LibSQLDocument = z.infer<typeof LibSQLDocumentSchema>;

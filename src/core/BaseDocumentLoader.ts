@@ -24,43 +24,27 @@ export class BaseDocumentLoader extends Transform {
    * Constructor.
    * @param options - The options for the document loader.
    */
-  constructor(options: LoaderDocumentOptions = {}) {
+  constructor(private options: LoaderDocumentOptions = {}) {
     super({ objectMode: true, ...options });
-    this.transform = options.transform?.bind(this);
-    this.flush = options.flush?.bind(this);
   }
 
   /**
-   * Transform the document.
+   * Write the document.
    * @param doc - The document to transform.
    * @param encoding - The encoding of the document.
    * @param callback - The callback to call when the document is transformed.
    */
-  async _write(doc: LoaderDocument, encoding: BufferEncoding, callback: LoaderDocumentCallback) {
-    try {
-      const parsedDoc = LoaderDocumentSchema.parse(doc);
+  _write(doc: LoaderDocument, encoding: BufferEncoding, callback: LoaderDocumentCallback) {
+    const parsedDoc = LoaderDocumentSchema.parse(doc);
 
-      // Test if the document should be processed
-      if (!this._test(parsedDoc)) {
-        this.push(doc);
-        return callback();
-      } else {
-        // Transform the document
-        this._transform(parsedDoc, encoding, callback);
-      }
-    } catch (error) {
-      callback(error as Error);
+    // Test if the document should be processed
+    if (!this._test(parsedDoc)) {
+      this.push(doc);
+      callback();
+      return true;
     }
-  }
 
-  /**
-   * Transform the document.
-   * @param doc - The document to transform.
-   * @param encoding - The encoding of the document.
-   * @param callback - The callback to call when the document is transformed.
-   */
-  async _transform(doc: LoaderDocument, encoding: BufferEncoding, callback: LoaderDocumentCallback) {
-    this.transform?.(doc, encoding, callback);
+    return super._write(parsedDoc, encoding, callback);
   }
 
   /**
@@ -68,7 +52,9 @@ export class BaseDocumentLoader extends Transform {
    * @param doc - The document to push.
    */
   push(doc: LoaderDocument) {
-    this.documents.push(doc);
+    if (doc !== null) {
+      this.documents.push(doc);
+    }
     return super.push(doc);
   }
 
@@ -87,6 +73,6 @@ export class BaseDocumentLoader extends Transform {
    * @returns True if the loader should process the document, false otherwise.
    */
   _test(doc: LoaderDocument): boolean {
-    return this.test ? this.test(doc) : true;
+    return this.options.test?.call(this, doc) ?? true;
   }
 }
