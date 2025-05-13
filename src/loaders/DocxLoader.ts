@@ -1,5 +1,5 @@
 import { BaseDocumentLoader, LoaderDocumentCallback } from "../core/BaseDocumentLoader";
-import { LoaderDocument } from "../types";
+import { LoaderDocument } from "../core/LoaderDocument";
 import mammoth from "mammoth";
 
 /**
@@ -9,9 +9,10 @@ export class DocxLoader extends BaseDocumentLoader {
   /**
    * Transform the data
    * @param doc - The document to transform
+   * @param _encoding - The encoding of the document
    * @param callback - The callback to call when the data is transformed
    */
-  async _transform({ content, metadata }: LoaderDocument, callback: LoaderDocumentCallback) {
+  async _transform({ content, metadata }: LoaderDocument, _encoding: BufferEncoding, callback: LoaderDocumentCallback) {
     const buffer = content as Buffer;
     const { value } = await mammoth.extractRawText({ buffer });
 
@@ -27,7 +28,7 @@ export class DocxLoader extends BaseDocumentLoader {
    * @param doc - The document to test.
    * @returns True if the loader should process the document, false otherwise.
    */
-  test(doc: LoaderDocument): boolean {
+  _test(doc: LoaderDocument): boolean {
     return Buffer.isBuffer(doc.content) && doc.content.subarray(0, 4).toString("hex") === "504b0304";
   }
 }

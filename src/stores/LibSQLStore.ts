@@ -1,4 +1,4 @@
-import { LoaderDocument, LoaderDocumentSchema } from "../types";
+import { LoaderDocument, LoaderDocumentSchema } from "../core/LoaderDocument";
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
 

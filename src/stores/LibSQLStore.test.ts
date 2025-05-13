@@ -1,13 +1,13 @@
 import { describe, it, beforeEach, expect } from "vitest";
 import { LibSQLStore, LibSQLStoreArgs } from "./LibSQLStore";
-import { OpenAIModel } from "../models";
 
 // Use a test database file or in-memory for isolation
 const TEST_DB_URL = "file:data/test-database.db";
 
+const vector = Array(1536).fill(0).map(() => Math.random());
+
 const defaultOptions: LibSQLStoreArgs = {
   tableName: "test_embeddings",
-  model: new OpenAIModel(),
   url: TEST_DB_URL,
   dimensions: 1536,
 };
@@ -15,6 +15,7 @@ const defaultOptions: LibSQLStoreArgs = {
 const sampleDoc = {
   content: "Hello world",
   metadata: { source: "test" },
+  vector,
 };
 
 describe("LibSQLStore", () => {
@@ -55,7 +56,7 @@ describe("LibSQLStore", () => {
     await store.addDocument(sampleDoc);
     await store.addDocument(sampleDoc);
 
-    const results = await store.search("Dummy");
+    const results = await store.search(vector);
     expect(results.length).toBeGreaterThan(1);
     // The closest vector should be the first one
     expect(results[0].vector).toBeDefined();

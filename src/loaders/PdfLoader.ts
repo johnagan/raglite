@@ -1,5 +1,5 @@
 import { BaseDocumentLoader, LoaderDocumentCallback } from "../core/BaseDocumentLoader";
-import { LoaderDocument } from "../types";
+import { LoaderDocument } from "../core/LoaderDocument";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 /**
@@ -9,9 +9,10 @@ export class PdfLoader extends BaseDocumentLoader {
   /**
    * Transform the data
    * @param doc - The data to transform
+   * @param encoding - The encoding of the data
    * @param callback - The callback to call when the data is transformed
    */
-  async _transform({ content, metadata }: LoaderDocument, callback: LoaderDocumentCallback) {
+  async _transform({ content, metadata }: LoaderDocument, encoding: BufferEncoding, callback: LoaderDocumentCallback) {
     // Read the PDF from buffer
     const data = new Uint8Array(content as Buffer);
     const loadingTask = getDocument({ data });
@@ -43,7 +44,7 @@ export class PdfLoader extends BaseDocumentLoader {
    * @param doc - The document to test.
    * @returns True if the loader should process the document, false otherwise.
    */
-  test(doc: LoaderDocument): boolean {
+  _test(doc: LoaderDocument): boolean {
     return Buffer.isBuffer(doc.content) && doc.content.subarray(0, 4).toString("hex") === "25504446";
   }
 }

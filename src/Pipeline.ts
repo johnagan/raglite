@@ -1,15 +1,15 @@
 import { BaseDocumentLoader, LoaderDocumentCallback } from "./core/BaseDocumentLoader";
+import { LoaderDocument } from "./core/LoaderDocument";
 import { DocxLoader } from "./loaders/DocxLoader";
 import { TextLoader } from "./loaders/TextLoader";
 import { PdfLoader } from "./loaders/PdfLoader";
 import { pipeline } from "stream/promises";
-import { LoaderDocument } from "./types";
 import { IModel } from "./core/IModel";
 
 /**
  * A pipeline for loading documents.
  */
-export class EmbeddingPipeline {
+export class Pipeline {
   /**
    * Constructor.
    * @param model - The model to use for embedding.
@@ -23,7 +23,7 @@ export class EmbeddingPipeline {
   getEmbeddingLoader() {
     const { model } = this;
     return new BaseDocumentLoader({
-      async transform({ content, metadata }: LoaderDocument, callback: LoaderDocumentCallback) {
+      async transform({ content, metadata }: LoaderDocument, _encoding: BufferEncoding, callback: LoaderDocumentCallback) {
         // If the content is not a string, push the data and return
         if (typeof content === "string") {
           const vector = await model.embed(content);
@@ -41,7 +41,7 @@ export class EmbeddingPipeline {
   getChunkLoader() {
     const { model } = this;
     return new BaseDocumentLoader({
-      async transform({ content, metadata }: LoaderDocument, callback: LoaderDocumentCallback) {
+      async transform({ content, metadata }: LoaderDocument, _encoding: BufferEncoding, callback: LoaderDocumentCallback) {
         // If the content is not a string, push the data and return
         if (typeof content === "string") {
           for await (const chunk of model.chunks(content)) {

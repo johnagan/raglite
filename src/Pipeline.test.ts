@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { OpenAIModel } from "./models/OpenAIModel";
-import { EmbeddingPipeline } from "./EmbeddingPipeline";
+import { Pipeline } from "./Pipeline";
 import { writeFile } from "fs/promises";
 import { IModel } from "./core/IModel";
 
@@ -12,13 +12,13 @@ const TEST_FILE_DIR = "/tmp";
 
 const apiKey = process.env.OPENAI_API_KEY!;
 
-describe("EmbeddingPipeline", () => {
-  let pipeline: EmbeddingPipeline;
+describe("Pipeline", () => {
+  let pipeline: Pipeline;
   let model: IModel;
 
   beforeEach(() => {
     model = new OpenAIModel({ apiKey });
-    pipeline = new EmbeddingPipeline(model);
+    pipeline = new Pipeline(model);
   });
 
   it("should load a docx file from a URL", async () => {
