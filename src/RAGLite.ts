@@ -8,6 +8,7 @@ export const RAGLiteOptionsSchema = LibSQLStoreOptionsSchema.merge(OpenAIModelOp
 
 export type RAGLiteOptions = z.infer<typeof RAGLiteOptionsSchema>;
 
+const Model = OpenAIModel;
 const Store = LibSQLStore;
 
 export class RAGLite {
@@ -20,7 +21,7 @@ export class RAGLite {
    * @param options - The options for the RAGLite class.
    */
   constructor(options: RAGLiteOptions) {
-    this.model = new OpenAIModel(options);
+    this.model = new Model(options);
     this.pipeline = new Pipeline(this.model);
     this.store = new Store(options);
   }
