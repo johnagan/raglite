@@ -1,4 +1,10 @@
-import { type IStore, type IDocument, IDocumentSchema, IMetadataSchema, IVectorSchema } from "../core";
+import {
+  type IStore,
+  type IDocument,
+  IDocumentSchema,
+  IMetadataSchema,
+  IVectorSchema,
+} from "../core";
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
 
@@ -19,7 +25,9 @@ export const LibSQLDocumentSchema = IDocumentSchema.extend({
       // Handle Node.js Buffer
       if (val instanceof Buffer) {
         // Convert Buffer to Float32Array, then to number[]
-        return Array.from(new Float32Array(val.buffer, val.byteOffset, val.byteLength / 4));
+        return Array.from(
+          new Float32Array(val.buffer, val.byteOffset, val.byteLength / 4)
+        );
       }
       // Handle ArrayBuffer
       if (val instanceof ArrayBuffer) {
@@ -44,7 +52,10 @@ export type LibSQLDocument = z.infer<typeof LibSQLDocumentSchema>;
 /**
  * The schema of a new document record
  */
-export const NewLibSQLDocumentSchema = LibSQLDocumentSchema.omit({ id: true, vector: true });
+export const NewLibSQLDocumentSchema = LibSQLDocumentSchema.omit({
+  id: true,
+  vector: true,
+});
 
 export type NewLibSQLDocument = z.infer<typeof NewLibSQLDocumentSchema>;
 
@@ -54,7 +65,10 @@ export type NewLibSQLDocument = z.infer<typeof NewLibSQLDocumentSchema>;
 export const LibSQLStoreArgsSchema = z.object({
   url: z.string().optional().describe("The URL of the database"),
   tableName: z.string().optional().describe("The name of the table"),
-  dimensions: z.number().optional().describe("The dimensions of the embedding vectors"),
+  dimensions: z
+    .number()
+    .optional()
+    .describe("The dimensions of the embedding vectors"),
 });
 
 export type LibSQLStoreArgs = z.infer<typeof LibSQLStoreArgsSchema>;
@@ -197,6 +211,9 @@ export class LibSQLStore implements IStore {
    */
   async dropTable() {
     const { tableName } = this.options;
-    await this.client.batch([`DROP INDEX IF EXISTS ${tableName}_idx`, `DROP TABLE IF EXISTS ${tableName}`]);
+    await this.client.batch([
+      `DROP INDEX IF EXISTS ${tableName}_idx`,
+      `DROP TABLE IF EXISTS ${tableName}`,
+    ]);
   }
 }

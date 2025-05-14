@@ -1,6 +1,11 @@
-import { Stream, type IDocument, type IStore, type IStreamCallback } from "../core";
+import {
+  Loader,
+  type IDocument,
+  type IStore,
+  type ILoaderCallback,
+} from "../core";
 
-export class StoreWriterStream extends Stream {
+export class StoreLoader extends Loader {
   constructor(private store: IStore) {
     super();
   }
@@ -11,9 +16,13 @@ export class StoreWriterStream extends Stream {
    * @param _encoding - The encoding of the document.
    * @param callback - The callback to call when the document is transformed.
    */
-  async _transform(doc: IDocument, _encoding: BufferEncoding, callback: IStreamCallback) {
+  async _transform(
+    doc: IDocument,
+    _encoding: BufferEncoding,
+    callback: ILoaderCallback,
+  ) {
     const result = await this.store.insert(doc);
-    this.push(result);
+    this.process(result);
     callback();
   }
 

@@ -1,5 +1,12 @@
-import { FileStream, UrlStream, EmbeddingStream, PdfStream, DocxStream, StoreWriterStream } from "./streams";
-import { type IModel, type IDocument, type IStore } from "./core";
+import {
+  FileLoader,
+  UrlLoader,
+  EmbeddingLoader,
+  PdfLoader,
+  DocxLoader,
+  StoreLoader,
+} from "./loader";
+import { type IConfig, type IDocument } from "./core";
 import { pipeline } from "stream/promises";
 import { Readable } from "stream";
 
@@ -9,9 +16,9 @@ import { Readable } from "stream";
 export class Pipeline {
   /**
    * Constructor.
-   * @param model - The model to use for embedding.
+   * @param config - The config for the pipeline.
    */
-  constructor(private model: IModel, private store: IStore) {}
+  constructor(private config: IConfig) {}
 
   /**
    * Takes a string or Buffer and resolves it to a Buffer, possibly via URL or file.
@@ -22,12 +29,7 @@ export class Pipeline {
     // Create the loaders
     const streams = [
       Readable.from([doc], { objectMode: true }),
-      new UrlStream(),
-      new FileStream(),
-      new PdfStream(),
-      new DocxStream(),
-      new EmbeddingStream(this.model),
-      new StoreWriterStream(this.store),
+      ...this.config.loaders,
     ];
 
     return new Promise(async (resolve, reject) => {

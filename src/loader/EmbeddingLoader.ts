@@ -1,9 +1,14 @@
-import { Stream, type IDocument, type IStreamCallback, type IModel } from "../core";
+import {
+  Loader,
+  type IDocument,
+  type ILoaderCallback,
+  type IModel,
+} from "../core";
 
 /**
  * A stream that chunks a document into smaller chunks and embeds them.
  */
-export class EmbeddingStream extends Stream {
+export class EmbeddingLoader extends Loader {
   constructor(private model: IModel) {
     super();
   }
@@ -14,10 +19,14 @@ export class EmbeddingStream extends Stream {
    * @param _encoding - The encoding of the document.
    * @param callback - The callback to call when the document is transformed.
    */
-  async _transform({ content, metadata }: IDocument, _encoding: BufferEncoding, callback: IStreamCallback) {
+  async _transform(
+    { content, metadata }: IDocument,
+    _encoding: BufferEncoding,
+    callback: ILoaderCallback,
+  ) {
     for await (const chunk of this.model.chunks(content as string)) {
       const vector = await this.model.embed(chunk);
-      this.push({ content: chunk, metadata, vector });
+      this.process({ content: chunk, metadata, vector });
     }
     callback();
   }

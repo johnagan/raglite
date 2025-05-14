@@ -1,17 +1,21 @@
-import { Stream, type IStreamCallback, type IDocument } from "../core";
+import { Loader, type ILoaderCallback, type IDocument } from "../core";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 /**
  * Loads a PDF document and returns the text content.
  */
-export class PdfStream extends Stream {
+export class PdfLoader extends Loader {
   /**
    * Transform the data
    * @param doc - The data to transform
    * @param encoding - The encoding of the data
    * @param callback - The callback to call when the data is transformed
    */
-  async _transform({ content, metadata }: IDocument, encoding: BufferEncoding, callback: IStreamCallback) {
+  async _transform(
+    { content, metadata }: IDocument,
+    encoding: BufferEncoding,
+    callback: ILoaderCallback,
+  ) {
     // Read the PDF from buffer
     const data = new Uint8Array(content as Buffer);
     const loadingTask = getDocument({ data });
@@ -32,7 +36,7 @@ export class PdfStream extends Stream {
       const _metadata = { ...metadata, ...info, pageNumber: i };
 
       // Push the transformed document to the stream
-      this.push({ content, metadata: _metadata });
+      this.process({ content, metadata: _metadata });
     }
 
     callback(); // End the stream
@@ -44,6 +48,9 @@ export class PdfStream extends Stream {
    * @returns True if the loader should process the document, false otherwise.
    */
   _test(doc: IDocument): boolean {
-    return Buffer.isBuffer(doc.content) && doc.content.subarray(0, 4).toString("hex") === "25504446";
+    return (
+      Buffer.isBuffer(doc.content) &&
+      doc.content.subarray(0, 4).toString("hex") === "25504446"
+    );
   }
 }

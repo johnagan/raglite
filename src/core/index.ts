@@ -1,4 +1,5 @@
 export * from "./IDocument";
-export * from "./Stream";
+export * from "./IConfig";
+export * from "./Loader";
 export * from "./IModel";
 export * from "./IStore";

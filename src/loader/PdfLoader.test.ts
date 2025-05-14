@@ -1,11 +1,12 @@
 import { describe, beforeAll, it, expect } from "vitest";
-import type { IDocument } from "../core";
-import { PdfStream } from "./PdfStream";
+import { type IDocument, LoaderEvents } from "../core";
+import { PdfLoader } from "./PdfLoader";
 
-export const TEST_FILE_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+export const TEST_FILE_URL =
+  "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
 
 describe("PdfLoader", () => {
-  let pdfLoader: PdfStream;
+  let pdfLoader: PdfLoader;
   let pdfBuffer: Buffer;
 
   beforeAll(async () => {
@@ -16,14 +17,14 @@ describe("PdfLoader", () => {
   });
 
   beforeEach(async () => {
-    pdfLoader = new PdfStream();
+    pdfLoader = new PdfLoader();
   });
 
   it("should ignore non-PDF files", async () => {
     const fakeBuffer = Buffer.from("not a pdf file");
 
     const result: IDocument = await new Promise((resolve) => {
-      pdfLoader.once("data", (output) => resolve(output));
+      pdfLoader.once(LoaderEvents.SKIPPED, (output) => resolve(output));
       pdfLoader.write({ content: fakeBuffer });
     });
 
@@ -33,7 +34,7 @@ describe("PdfLoader", () => {
 
   it("should load a PDF file without metadata", async () => {
     const result: IDocument = await new Promise((resolve) => {
-      pdfLoader.once("data", (output) => resolve(output));
+      pdfLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
       pdfLoader.write({ content: pdfBuffer });
     });
 
@@ -46,7 +47,7 @@ describe("PdfLoader", () => {
     const metadata = { foo: "bar" };
 
     const result: IDocument = await new Promise((resolve) => {
-      pdfLoader.once("data", (output) => resolve(output));
+      pdfLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
       pdfLoader.write({ content: pdfBuffer, metadata });
     });
 
