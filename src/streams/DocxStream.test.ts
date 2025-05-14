@@ -1,11 +1,11 @@
 import { describe, beforeAll, it, expect } from "vitest";
-import type { LoaderDocument } from "../core";
-import { DocxLoader } from "./DocxLoader";
+import type { IDocument } from "../core";
+import { DocxStream } from "./DocxStream";
 
 export const TEST_FILE_URL = "https://calibre-ebook.com/downloads/demos/demo.docx";
 
 describe("DocxLoader", () => {
-  let docxLoader: DocxLoader;
+  let docxLoader: DocxStream;
   let docxBuffer: Buffer;
 
   beforeAll(async () => {
@@ -15,13 +15,13 @@ describe("DocxLoader", () => {
   });
 
   beforeEach(async () => {
-    docxLoader = new DocxLoader();
+    docxLoader = new DocxStream();
   });
 
   it("should ignore non-PDF files", async () => {
     const fakeBuffer = Buffer.from("not a docx file");
 
-    const result: LoaderDocument = await new Promise((resolve) => {
+    const result: IDocument = await new Promise((resolve) => {
       docxLoader.once("data", (output) => resolve(output));
       docxLoader.write({ content: fakeBuffer });
     });
@@ -31,7 +31,7 @@ describe("DocxLoader", () => {
   });
 
   it("should load a PDF file without metadata", async () => {
-    const result: LoaderDocument = await new Promise((resolve) => {
+    const result: IDocument = await new Promise((resolve) => {
       docxLoader.once("data", (output) => resolve(output));
       docxLoader.write({ content: docxBuffer });
     });
@@ -44,7 +44,7 @@ describe("DocxLoader", () => {
   it("should attach metadata if provided", async () => {
     const metadata = { foo: "bar" };
 
-    const result: LoaderDocument = await new Promise((resolve) => {
+    const result: IDocument = await new Promise((resolve) => {
       docxLoader.once("data", (output) => resolve(output));
       docxLoader.write({ content: docxBuffer, metadata });
     });

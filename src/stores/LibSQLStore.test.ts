@@ -4,7 +4,9 @@ import { LibSQLStore, LibSQLStoreArgs } from "./LibSQLStore";
 // Use a test database file or in-memory for isolation
 const TEST_DB_URL = "file:data/test-database.db";
 
-const vector = Array(1536).fill(0).map(() => Math.random());
+const vector = Array(1536)
+  .fill(0)
+  .map(() => Math.random());
 
 const defaultOptions: LibSQLStoreArgs = {
   tableName: "test_embeddings",
@@ -33,7 +35,7 @@ describe("LibSQLStore", () => {
   });
 
   it("should add and retrieve a document", async () => {
-    const inserted = await store.addDocument(sampleDoc);
+    const inserted = await store.insert(sampleDoc);
     expect(inserted.content).toBe(sampleDoc.content);
     expect(inserted.metadata).toEqual(sampleDoc.metadata);
     expect(inserted.vector).toBeDefined();
@@ -52,9 +54,9 @@ describe("LibSQLStore", () => {
 
   it("should search for similar vectors", async () => {
     // Insert multiple docs
-    await store.addDocument(sampleDoc);
-    await store.addDocument(sampleDoc);
-    await store.addDocument(sampleDoc);
+    await store.insert(sampleDoc);
+    await store.insert(sampleDoc);
+    await store.insert(sampleDoc);
 
     const results = await store.search(vector);
     expect(results.length).toBeGreaterThan(1);
@@ -64,7 +66,7 @@ describe("LibSQLStore", () => {
   });
 
   it("should reset the database", async () => {
-    await store.addDocument(sampleDoc);
+    await store.insert(sampleDoc);
     await store.reset();
     await expect(store.getOne(1)).rejects.toThrow("Embedding not found");
   });

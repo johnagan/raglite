@@ -1,30 +1,30 @@
 import { Transform, TransformOptions } from "stream";
-import { type LoaderDocument, LoaderDocumentSchema } from "./LoaderDocument";
+import { type IDocument, IDocumentSchema } from "./IDocument.js";
 
-export interface LoaderDocumentCallback {
-  (error?: Error | null, doc?: LoaderDocument): void;
+export interface IStreamCallback {
+  (error?: Error | null, doc?: IDocument): void;
 }
 
-export interface LoaderDocumentOptions<T extends BaseDocumentLoader = BaseDocumentLoader> extends TransformOptions<T> {
-  transform?(this: T, doc: LoaderDocument, encoding: BufferEncoding, callback: LoaderDocumentCallback): void;
-  flush?(this: T, callback: LoaderDocumentCallback): void;
-  test?(this: T, doc: LoaderDocument): boolean;
+export interface IStreamOptions<T extends Stream = Stream> extends TransformOptions<T> {
+  transform?(this: T, doc: IDocument, encoding: BufferEncoding, callback: IStreamCallback): void;
+  flush?(this: T, callback: IStreamCallback): void;
+  test?(this: T, doc: IDocument): boolean;
 }
 
-export class BaseDocumentLoader extends Transform {
+export class Stream extends Transform {
   /**
    * The documents.
    */
-  documents: LoaderDocument[] = [];
-  transform?: (this: BaseDocumentLoader, doc: LoaderDocument, encoding: BufferEncoding, callback: LoaderDocumentCallback) => void;
-  flush?: (this: BaseDocumentLoader, callback: LoaderDocumentCallback) => void;
-  test?: (this: BaseDocumentLoader, doc: LoaderDocument) => boolean;
+  documents: IDocument[] = [];
+  transform?: (this: Stream, doc: IDocument, encoding: BufferEncoding, callback: IStreamCallback) => void;
+  flush?: (this: Stream, callback: IStreamCallback) => void;
+  test?: (this: Stream, doc: IDocument) => boolean;
 
   /**
    * Constructor.
    * @param options - The options for the document loader.
    */
-  constructor(private options: LoaderDocumentOptions = {}) {
+  constructor(private options: IStreamOptions = {}) {
     super({ objectMode: true, ...options });
   }
 
@@ -34,8 +34,8 @@ export class BaseDocumentLoader extends Transform {
    * @param encoding - The encoding of the document.
    * @param callback - The callback to call when the document is transformed.
    */
-  _write(doc: LoaderDocument, encoding: BufferEncoding, callback: LoaderDocumentCallback) {
-    const parsedDoc = LoaderDocumentSchema.parse(doc);
+  _write(doc: IDocument, encoding: BufferEncoding, callback: IStreamCallback) {
+    const parsedDoc = IDocumentSchema.parse(doc);
 
     // Test if the document should be processed
     if (!this._test(parsedDoc)) {
@@ -51,7 +51,7 @@ export class BaseDocumentLoader extends Transform {
    * Push the document.
    * @param doc - The document to push.
    */
-  push(doc: LoaderDocument) {
+  push(doc: IDocument) {
     if (doc !== null) {
       this.documents.push(doc);
     }
@@ -62,7 +62,7 @@ export class BaseDocumentLoader extends Transform {
    * Finalize the stream.
    * @param callback - The callback to call when the stream is finalized.
    */
-  _final(callback: LoaderDocumentCallback) {
+  _final(callback: IStreamCallback) {
     this.emit("documents", this.documents);
     callback();
   }
@@ -72,7 +72,7 @@ export class BaseDocumentLoader extends Transform {
    * @param doc - The document to test.
    * @returns True if the loader should process the document, false otherwise.
    */
-  _test(doc: LoaderDocument): boolean {
+  _test(doc: IDocument): boolean {
     return this.options.test?.call(this, doc) ?? true;
   }
 }

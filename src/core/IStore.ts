@@ -1,4 +1,4 @@
-import type { LoaderDocument } from "./LoaderDocument";
+import type { IDocument, IRecord } from "./IDocument.js";
 
 export interface IStore {
   options: any;
@@ -7,14 +7,14 @@ export interface IStore {
    * @param doc - The document to add.
    * @returns The added document.
    */
-  addDocument: (doc: LoaderDocument) => Promise<LoaderDocument>;
+  insert: (doc: IDocument) => Promise<IRecord>;
 
   /**
    * Gets a document from the store.
    * @param id - The id of the document to get.
    * @returns The document.
    */
-  getOne: (id: number) => Promise<LoaderDocument>;
+  getOne: (id: number) => Promise<IRecord>;
 
   /**
    * Searches the store for documents.
@@ -22,7 +22,7 @@ export interface IStore {
    * @param limit - The number of results to return.
    * @returns The search results.
    */
-  search: (vector: number[], limit: number) => Promise<LoaderDocument[]>;
+  search: (vector: number[], limit: number) => Promise<IRecord[]>;
 
   /**
    * Resets the store.

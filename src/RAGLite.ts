@@ -1,6 +1,6 @@
 import { LibSQLStore, LibSQLStoreOptionsSchema } from "./stores/LibSQLStore";
 import { OpenAIModelOptionsSchema, OpenAIModel } from "./models/OpenAIModel";
-import type { LoaderContent, LoaderMetadata, IModel, IStore } from "./core";
+import type { IContent, IMetadata, IModel, IStore } from "./core";
 import { Pipeline } from "./Pipeline";
 import { z } from "zod";
 
@@ -31,7 +31,7 @@ export class RAGLite {
    * @param content - The content, URL, file path,or buffer to load.
    * @param metadata - The metadata to load.
    */
-  async load(content: LoaderContent, metadata: LoaderMetadata) {
+  async load(content: IContent, metadata: IMetadata) {
     const docs = await this.pipeline.load({ content, metadata });
 
     if (!docs) {
@@ -39,7 +39,7 @@ export class RAGLite {
     }
 
     for (const doc of docs) {
-      await this.store.addDocument(doc);
+      await this.store.insert(doc);
     }
 
     return docs;

@@ -11,8 +11,8 @@ vi.mock("./models/OpenAIModel", async (importOriginal) => {
     ...originalModule,
     OpenAIModel: vi.fn().mockImplementation(() => ({
       embed: vi.fn().mockResolvedValue([0.1, 0.2, 0.3]),
-      options: { apiKey: "test-api-key", model: "text-embedding-3-small" }
-    }))
+      options: { apiKey: "test-api-key", model: "text-embedding-3-small" },
+    })),
   };
 });
 
@@ -21,10 +21,10 @@ vi.mock("./Pipeline", async (importOriginal) => {
   return {
     ...originalModule,
     Pipeline: vi.fn().mockImplementation(() => ({
-      load: vi.fn().mockResolvedValue([
-        { id: 1, content: "test content", metadata: { source: "test" }, vector: [0.1, 0.2, 0.3] }
-      ])
-    }))
+      load: vi
+        .fn()
+        .mockResolvedValue([{ id: 1, content: "test content", metadata: { source: "test" }, vector: [0.1, 0.2, 0.3] }]),
+    })),
   };
 });
 
@@ -37,12 +37,14 @@ vi.mock("./stores/LibSQLStore", async (importOriginal) => {
         id: 1,
         content: "test content",
         metadata: { source: "test" },
-        vector: [0.1, 0.2, 0.3]
+        vector: [0.1, 0.2, 0.3],
       }),
-      search: vi.fn().mockResolvedValue([
-        { id: 1, content: "test content", metadata: { source: "test" }, vector: [0.1, 0.2, 0.3], score: 0.95 }
-      ])
-    }))
+      search: vi
+        .fn()
+        .mockResolvedValue([
+          { id: 1, content: "test content", metadata: { source: "test" }, vector: [0.1, 0.2, 0.3], score: 0.95 },
+        ]),
+    })),
   };
 });
 
@@ -54,7 +56,7 @@ describe("RAGLite", () => {
     tableName: "test_embeddings",
     dimensions: 1536,
     model: "text-embedding-3-small",
-    maxTokens: 1000
+    maxTokens: 1000,
   };
 
   beforeEach(() => {
@@ -78,7 +80,7 @@ describe("RAGLite", () => {
     const docs = await raglite.load(content, metadata);
 
     expect(raglite.pipeline.load).toHaveBeenCalledWith({ content, metadata });
-    expect(raglite.store.addDocument).toHaveBeenCalled();
+    expect(raglite.store.insert).toHaveBeenCalled();
     expect(docs).toBeDefined();
     expect(docs.length).toBe(1);
     expect(docs[0].content).toBe("test content");
@@ -94,7 +96,7 @@ describe("RAGLite", () => {
 
     await expect(raglite.load(content, metadata)).rejects.toThrow("No document found");
     expect(raglite.pipeline.load).toHaveBeenCalledWith({ content, metadata });
-    expect(raglite.store.addDocument).not.toHaveBeenCalled();
+    expect(raglite.store.insert).not.toHaveBeenCalled();
   });
 
   it("should search for documents", async () => {

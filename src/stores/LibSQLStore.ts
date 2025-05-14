@@ -1,4 +1,4 @@
-import { type IStore, type LoaderDocument, LoaderDocumentSchema, LoaderMetadataSchema, LoaderVectorSchema } from "../core";
+import { type IStore, type IDocument, IDocumentSchema, IMetadataSchema, IVectorSchema } from "../core";
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
 
@@ -9,7 +9,7 @@ const DEFAULT_DIMENSIONS = 1536;
 /**
  * The schema of the document record
  */
-export const LibSQLDocumentSchema = LoaderDocumentSchema.extend({
+export const LibSQLDocumentSchema = IDocumentSchema.extend({
   id: z.number().describe("The id of the document"),
   vector: z.preprocess((val) => {
     try {
@@ -29,14 +29,14 @@ export const LibSQLDocumentSchema = LoaderDocumentSchema.extend({
     } catch {
       return [];
     }
-  }, LoaderVectorSchema),
+  }, IVectorSchema),
   metadata: z.preprocess((val) => {
     try {
       return typeof val === "string" ? JSON.parse(val) : val;
     } catch {
       return {};
     }
-  }, LoaderMetadataSchema),
+  }, IMetadataSchema),
 });
 
 export type LibSQLDocument = z.infer<typeof LibSQLDocumentSchema>;
@@ -82,9 +82,16 @@ export class LibSQLStore implements IStore {
    * The constructor for the LibSQLStore class.
    * @param options - The options for the LibSQLStore class.
    */
-  constructor(options: LibSQLStoreArgs) {
+  constructor(options: LibSQLStoreArgs = {}) {
     this.options = LibSQLStoreOptionsSchema.parse(options);
     this.client = createClient({ url: this.options.url });
+
+    // Create the table if it doesn't exist
+    this.tableExists(this.options.tableName).then((exists) => {
+      if (!exists) {
+        this.reset();
+      }
+    });
   }
 
   /**
@@ -124,7 +131,7 @@ export class LibSQLStore implements IStore {
    * @param doc - The document to add.
    * @returns The added document.
    */
-  async addDocument(doc: LoaderDocument) {
+  async insert(doc: IDocument) {
     const { content, metadata, vector } = doc;
     const { tableName } = this.options;
 
@@ -166,5 +173,19 @@ export class LibSQLStore implements IStore {
 
     // Convert the records to the SearchResult type
     return records.rows.map((row) => LibSQLDocumentSchema.parse(row));
+  }
+
+  /**
+   * Checks if a table exists.
+   * @param tableName - The name of the table.
+   * @returns True if the table exists, false otherwise.
+   */
+  async tableExists(tableName: string): Promise<boolean> {
+    const result = await this.client.execute({
+      sql: `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+      args: [tableName],
+    });
+
+    return result.rows.length > 0;
   }
 }

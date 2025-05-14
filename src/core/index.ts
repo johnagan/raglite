@@ -1,4 +1,4 @@
-export * from "./BaseDocumentLoader";
-export * from "./LoaderDocument";
+export * from "./IDocument";
+export * from "./Stream";
 export * from "./IModel";
 export * from "./IStore";

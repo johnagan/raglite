@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { OpenAIModel } from "./models/OpenAIModel";
-import { Pipeline } from "./Pipeline";
+import { LibSQLStore } from "./stores/LibSQLStore";
+import type { IModel, IStore } from "./core";
 import { writeFile } from "fs/promises";
-import type { IModel } from "./core";
-
+import { Pipeline } from "./Pipeline";
 const TEST_INLINE_CONTENT = "Hello world";
 const TEST_DOCX_URL = "https://calibre-ebook.com/downloads/demos/demo.docx";
 const TEST_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
@@ -12,13 +12,17 @@ const TEST_FILE_DIR = "/tmp";
 
 const apiKey = process.env.OPENAI_API_KEY!;
 
-describe("Pipeline", () => {
+describe("Pipeline", { timeout: 10000 }, () => {
   let pipeline: Pipeline;
   let model: IModel;
+  let store: IStore;
 
   beforeEach(() => {
+    store = new LibSQLStore();
+    store.reset();
+
     model = new OpenAIModel({ apiKey });
-    pipeline = new Pipeline(model);
+    pipeline = new Pipeline(model, store);
   });
 
   it("should load a docx file from a URL", async () => {
