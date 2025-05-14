@@ -23,9 +23,4 @@ export interface IStore {
    * @returns The search results.
    */
   search: (vector: number[], limit: number) => Promise<IRecord[]>;
-
-  /**
-   * Resets the store.
-   */
-  reset: () => Promise<void>;
 }

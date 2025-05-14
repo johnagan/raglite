@@ -19,8 +19,6 @@ describe("Pipeline", { timeout: 10000 }, () => {
 
   beforeEach(() => {
     store = new LibSQLStore();
-    store.reset();
-
     model = new OpenAIModel({ apiKey });
     pipeline = new Pipeline(model, store);
   });

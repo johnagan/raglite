@@ -87,23 +87,7 @@ export class LibSQLStore implements IStore {
     this.client = createClient({ url: this.options.url });
 
     // Create the table if it doesn't exist
-    this.tableExists(this.options.tableName).then((exists) => {
-      if (!exists) {
-        this.reset();
-      }
-    });
-  }
-
-  /**
-   * Resets the database.
-   */
-  async reset() {
-    const { tableName, dimensions } = this.options;
-    await this.client.batch([
-      `DROP TABLE IF EXISTS ${tableName}`,
-      `CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, metadata TEXT, vector F32_BLOB(${dimensions}))`,
-      `CREATE INDEX ${tableName}_idx ON ${tableName} (libsql_vector_idx(vector))`,
-    ]);
+    this.createTable();
   }
 
   /**
@@ -187,5 +171,32 @@ export class LibSQLStore implements IStore {
     });
 
     return result.rows.length > 0;
+  }
+
+  /**
+   * Creates the table and index.
+   */
+  async createTable() {
+    const { tableName, dimensions } = this.options;
+
+    // Check if the table exists
+    const exists = await this.tableExists(tableName);
+    if (exists) {
+      return;
+    }
+
+    // Create the table
+    await this.client.batch([
+      `CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, metadata TEXT, vector F32_BLOB(${dimensions}))`,
+      `CREATE INDEX ${tableName}_idx ON ${tableName} (libsql_vector_idx(vector))`,
+    ]);
+  }
+
+  /**
+   * Drops the table.
+   */
+  async dropTable() {
+    const { tableName } = this.options;
+    await this.client.batch([`DROP INDEX IF EXISTS ${tableName}_idx`, `DROP TABLE IF EXISTS ${tableName}`]);
   }
 }
