@@ -46,16 +46,6 @@ export class Loader extends Transform {
   errors: IDocument[] = [];
 
   /**
-   * The transform function.
-   */
-  transform?: (
-    this: Loader,
-    doc: IDocument,
-    encoding: BufferEncoding,
-    callback: ILoaderCallback,
-  ) => void;
-
-  /**
    * Constructor.
    * @param options - The options for the document loader.
    */

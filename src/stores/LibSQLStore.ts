@@ -63,7 +63,7 @@ export type NewLibSQLDocument = z.infer<typeof NewLibSQLDocumentSchema>;
  * The arguments for the LibSQLStore class.
  */
 export const LibSQLStoreArgsSchema = z.object({
-  url: z.string().optional().describe("The URL of the database"),
+  databaseUrl: z.string().optional().describe("The URL of the database"),
   tableName: z.string().optional().describe("The name of the table"),
   dimensions: z
     .number()
@@ -79,7 +79,7 @@ export type LibSQLStoreArgs = z.infer<typeof LibSQLStoreArgsSchema>;
 export const LibSQLStoreOptionsSchema = LibSQLStoreArgsSchema.extend({
   dimensions: z.coerce.number().default(DEFAULT_DIMENSIONS),
   tableName: z.string().default(DEFAULT_TABLE_NAME),
-  url: z.string().default(DEFAULT_DATABASE_URL),
+  databaseUrl: z.string().default(DEFAULT_DATABASE_URL),
 });
 
 export type LibSQLStoreOptions = z.infer<typeof LibSQLStoreOptionsSchema>;
@@ -98,7 +98,7 @@ export class LibSQLStore implements IStore {
    */
   constructor(options: LibSQLStoreArgs = {}) {
     this.options = LibSQLStoreOptionsSchema.parse(options);
-    this.client = createClient({ url: this.options.url });
+    this.client = createClient({ url: this.options.databaseUrl });
 
     // Create the table if it doesn't exist
     this.createTable();

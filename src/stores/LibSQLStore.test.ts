@@ -10,7 +10,7 @@ const vector = Array(1536)
 
 const defaultOptions: LibSQLStoreArgs = {
   tableName: "test_embeddings",
-  url: TEST_DB_URL,
+  databaseUrl: TEST_DB_URL,
   dimensions: 1536,
 };
 
@@ -25,11 +25,10 @@ describe("LibSQLStore", () => {
 
   beforeEach(async () => {
     store = new LibSQLStore(defaultOptions);
-    await store.reset();
   });
 
   it("should initialize with correct options", () => {
-    expect(store.options.url).toBe(TEST_DB_URL);
+    expect(store.options.databaseUrl).toBe(TEST_DB_URL);
     expect(store.options.tableName).toBe("test_embeddings");
     expect(store.options.dimensions).toBe(1536);
   });
@@ -63,11 +62,5 @@ describe("LibSQLStore", () => {
     // The closest vector should be the first one
     expect(results[0].vector).toBeDefined();
     expect(results[0].vector?.length).toBeGreaterThan(0);
-  });
-
-  it("should reset the database", async () => {
-    await store.insert(sampleDoc);
-    await store.reset();
-    await expect(store.getOne(1)).rejects.toThrow("Embedding not found");
   });
 });

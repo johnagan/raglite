@@ -10,7 +10,10 @@ export const OpenAIModelArgsSchema = z.object({
   apiKey: z.string().nonempty().describe("The API key for OpenAI"),
   model: z.string().optional().describe("The model to use for embedding"),
   dimensions: z.number().optional().describe("The dimensions of the embedding"),
-  maxTokens: z.number().optional().describe("The maximum number of tokens to embed"),
+  maxTokens: z
+    .number()
+    .optional()
+    .describe("The maximum number of tokens to embed per chunk"),
 });
 
 export type OpenAIModelArgs = z.infer<typeof OpenAIModelArgsSchema>;

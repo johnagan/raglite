@@ -1,5 +1,5 @@
 {
-  "name": "raglite",
+  "name": "ragpipe",
   "version": "1.0.5",
   "description": "A minimal TypeScript RAG pipeline, built on top of sqlite/libsql, supporting PDF and DOCX",
   "main": "dist/index.js",
