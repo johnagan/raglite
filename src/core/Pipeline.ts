@@ -1,12 +1,4 @@
-import {
-  FileLoader,
-  UrlLoader,
-  EmbeddingLoader,
-  PdfLoader,
-  DocxLoader,
-  StoreLoader,
-} from "./loader";
-import { type IConfig, type IDocument } from "./core";
+import { type IConfig, type IDocument } from ".";
 import { pipeline } from "stream/promises";
 import { Readable } from "stream";
 

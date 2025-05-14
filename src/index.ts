@@ -1,2 +1,2 @@
 export * from "./RAGLite";
-export * from "./Pipeline";
+export * from "./core/Pipeline";

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { type IDocument, type ILoaderError, LoaderEvents } from "../core";
+import { type IDocument, type ILoaderError, LoaderEvent } from "../core";
 import { UrlLoader } from "./UrlLoader";
 
 describe("UrlLoader", () => {
@@ -27,7 +27,7 @@ describe("UrlLoader", () => {
     const inputDoc: IDocument = { content: TEST_URL, metadata: {} };
 
     const result: IDocument = await new Promise((resolve) => {
-      urlLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      urlLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       urlLoader.write(inputDoc);
     });
 
@@ -50,7 +50,7 @@ describe("UrlLoader", () => {
     const inputDoc: IDocument = { content: TEST_URL, metadata: { foo: "bar" } };
 
     const result: IDocument = await new Promise((resolve) => {
-      urlLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      urlLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       urlLoader.write(inputDoc);
     });
 
@@ -68,7 +68,7 @@ describe("UrlLoader", () => {
     const TEST_TEXT_URL = "https://example.com/text.txt";
     const inputDoc: IDocument = { content: TEST_TEXT_URL, metadata: {} };
     const result: IDocument = await new Promise((resolve) => {
-      urlLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      urlLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       urlLoader.write(inputDoc);
     });
 
@@ -87,7 +87,7 @@ describe("UrlLoader", () => {
     const TEST_BINARY_URL = "https://example.com/binary.bin";
     const inputDoc: IDocument = { content: TEST_BINARY_URL, metadata: {} };
     const result: IDocument = await new Promise((resolve) => {
-      urlLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      urlLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       urlLoader.write(inputDoc);
     });
 
@@ -104,7 +104,7 @@ describe("UrlLoader", () => {
     const inputDoc: IDocument = { content: TEST_ERROR_URL, metadata: {} };
 
     const result: ILoaderError = await new Promise((resolve) => {
-      urlLoader.once(LoaderEvents.ERROR, (output) => resolve(output));
+      urlLoader.once(LoaderEvent.ERROR, (output) => resolve(output));
       urlLoader.write(inputDoc);
     });
 
@@ -123,7 +123,7 @@ describe("UrlLoader", () => {
     const inputDoc: IDocument = { content: TEST_404_URL, metadata: {} };
 
     const result: ILoaderError = await new Promise((resolve) => {
-      urlLoader.once(LoaderEvents.ERROR, (output) => resolve(output));
+      urlLoader.once(LoaderEvent.ERROR, (output) => resolve(output));
       urlLoader.write(inputDoc);
     });
 

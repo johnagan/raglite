@@ -1,12 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { OpenAIModel } from "./models/OpenAIModel";
 import { LibSQLStore } from "./stores/LibSQLStore";
-import { Pipeline } from "./Pipeline";
+import { Pipeline } from "./core/Pipeline";
 import { RAGLite } from "./RAGLite";
 
 // Mock dependencies
 vi.mock("./models/OpenAIModel", async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import("./models/OpenAIModel")>();
+  const originalModule =
+    await importOriginal<typeof import("./models/OpenAIModel")>();
   return {
     ...originalModule,
     OpenAIModel: vi.fn().mockImplementation(() => ({
@@ -17,19 +18,28 @@ vi.mock("./models/OpenAIModel", async (importOriginal) => {
 });
 
 vi.mock("./Pipeline", async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import("./Pipeline")>();
+  const originalModule =
+    await importOriginal<typeof import("./core/Pipeline")>();
   return {
     ...originalModule,
     Pipeline: vi.fn().mockImplementation(() => ({
       load: vi
         .fn()
-        .mockResolvedValue([{ id: 1, content: "test content", metadata: { source: "test" }, vector: [0.1, 0.2, 0.3] }]),
+        .mockResolvedValue([
+          {
+            id: 1,
+            content: "test content",
+            metadata: { source: "test" },
+            vector: [0.1, 0.2, 0.3],
+          },
+        ]),
     })),
   };
 });
 
 vi.mock("./stores/LibSQLStore", async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import("./stores/LibSQLStore")>();
+  const originalModule =
+    await importOriginal<typeof import("./stores/LibSQLStore")>();
   return {
     ...originalModule,
     LibSQLStore: vi.fn().mockImplementation(() => ({
@@ -42,7 +52,13 @@ vi.mock("./stores/LibSQLStore", async (importOriginal) => {
       search: vi
         .fn()
         .mockResolvedValue([
-          { id: 1, content: "test content", metadata: { source: "test" }, vector: [0.1, 0.2, 0.3], score: 0.95 },
+          {
+            id: 1,
+            content: "test content",
+            metadata: { source: "test" },
+            vector: [0.1, 0.2, 0.3],
+            score: 0.95,
+          },
         ]),
     })),
   };
@@ -94,7 +110,9 @@ describe("RAGLite", () => {
     const content = "test content";
     const metadata = { source: "test" };
 
-    await expect(raglite.load(content, metadata)).rejects.toThrow("No document found");
+    await expect(raglite.load(content, metadata)).rejects.toThrow(
+      "No document found",
+    );
     expect(raglite.pipeline.load).toHaveBeenCalledWith({ content, metadata });
     expect(raglite.store.insert).not.toHaveBeenCalled();
   });

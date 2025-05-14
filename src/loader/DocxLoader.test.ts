@@ -1,5 +1,5 @@
 import { describe, beforeAll, it, expect } from "vitest";
-import { type IDocument, type ILoaderError, LoaderEvents } from "../core";
+import { type IDocument, type ILoaderError, LoaderEvent } from "../core";
 import { DocxLoader } from "./DocxLoader";
 
 export const TEST_FILE_URL =
@@ -29,7 +29,7 @@ describe("DocxLoader", () => {
     const fakeBuffer = Buffer.from("not a docx file");
 
     const result: IDocument = await new Promise((resolve) => {
-      docxLoader.once(LoaderEvents.SKIPPED, (output) => resolve(output));
+      docxLoader.once(LoaderEvent.SKIPPED, (output) => resolve(output));
       docxLoader.write({ content: fakeBuffer });
     });
 
@@ -39,7 +39,7 @@ describe("DocxLoader", () => {
 
   it("should load a PDF file without metadata", async () => {
     const result: IDocument = await new Promise((resolve) => {
-      docxLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      docxLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       docxLoader.write({ content: docxBuffer });
     });
 
@@ -52,7 +52,7 @@ describe("DocxLoader", () => {
     const metadata = { foo: "bar" };
 
     const result: IDocument = await new Promise((resolve) => {
-      docxLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      docxLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       docxLoader.write({ content: docxBuffer, metadata });
     });
 
@@ -63,7 +63,7 @@ describe("DocxLoader", () => {
 
   it("should handle errors", async () => {
     const result: ILoaderError = await new Promise((resolve) => {
-      docxLoader.once(LoaderEvents.ERROR, (output) => resolve(output));
+      docxLoader.once(LoaderEvent.ERROR, (output) => resolve(output));
       docxLoader.write({ content: invalidBuffer });
     });
 

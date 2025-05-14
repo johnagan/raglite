@@ -18,17 +18,24 @@ export class FileLoader extends Loader {
   ) {
     const filePath = doc.content as string;
 
-    // Get the file name from the path
-    const fileName = filePath.split("/").pop() || "";
-    doc.metadata = { ...doc.metadata, fileName };
+    try {
+      // Get the file name from the path
+      const fileName = filePath.split("/").pop() || "";
 
-    // Read the file
-    const buffer = readFileSync(filePath);
+      // Read the file
+      const buffer = readFileSync(filePath);
 
-    // Update the input
-    doc.content = Buffer.from(buffer);
+      // Update the input
+      doc.content = Buffer.from(buffer);
 
-    this.process(doc);
+      // Add file name to metadata
+      doc.metadata = { ...doc.metadata, fileName };
+
+      // Process the document
+      this.process(doc);
+    } catch (error) {
+      this.error(doc, error);
+    }
     callback();
   }
 

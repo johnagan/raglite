@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import type { IDocument } from "../core";
-import { FileLoader } from "./FileLoader";
+import { LoaderEvent, type IDocument, type ILoaderError } from "../core";
 import { writeFileSync, unlinkSync, existsSync } from "fs";
+import { FileLoader } from "./FileLoader";
 import { join } from "path";
 
 describe("FileLoader", () => {
@@ -30,7 +30,7 @@ describe("FileLoader", () => {
     };
 
     const result: IDocument = await new Promise((resolve) => {
-      fileLoader.once("data", (output) => resolve(output));
+      fileLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       fileLoader.write(inputDoc);
     });
 
@@ -39,5 +39,21 @@ describe("FileLoader", () => {
     expect(result.content.toString()).toBe(TEST_CONTENT);
     expect(result.metadata.foo).toBe("bar");
     expect(result.metadata.fileName).toBe(TEST_FILE_NAME);
+  });
+
+  it("should skip when file doesn't exist", async () => {
+    const nonExistentPath = join(__dirname, "non-existent-file.txt");
+    const inputDoc: IDocument = {
+      content: nonExistentPath,
+      metadata: {},
+    };
+
+    const result: IDocument = await new Promise((resolve) => {
+      fileLoader.once(LoaderEvent.SKIPPED, (output) => resolve(output));
+      fileLoader.write(inputDoc);
+    });
+
+    expect(result).toBeDefined();
+    expect(result).toBe(inputDoc);
   });
 });

@@ -1,9 +1,9 @@
 import {
   type IStore,
   type IDocument,
-  IDocumentSchema,
-  IMetadataSchema,
-  IVectorSchema,
+  DocumentSchema,
+  MetadataSchema,
+  VectorSchema,
 } from "../core";
 import { createClient, type Client } from "@libsql/client";
 import { z } from "zod";
@@ -15,7 +15,7 @@ const DEFAULT_DIMENSIONS = 1536;
 /**
  * The schema of the document record
  */
-export const LibSQLDocumentSchema = IDocumentSchema.extend({
+export const LibSQLDocumentSchema = DocumentSchema.extend({
   id: z.number().describe("The id of the document"),
   vector: z.preprocess((val) => {
     try {
@@ -26,7 +26,7 @@ export const LibSQLDocumentSchema = IDocumentSchema.extend({
       if (val instanceof Buffer) {
         // Convert Buffer to Float32Array, then to number[]
         return Array.from(
-          new Float32Array(val.buffer, val.byteOffset, val.byteLength / 4)
+          new Float32Array(val.buffer, val.byteOffset, val.byteLength / 4),
         );
       }
       // Handle ArrayBuffer
@@ -37,14 +37,14 @@ export const LibSQLDocumentSchema = IDocumentSchema.extend({
     } catch {
       return [];
     }
-  }, IVectorSchema),
+  }, VectorSchema),
   metadata: z.preprocess((val) => {
     try {
       return typeof val === "string" ? JSON.parse(val) : val;
     } catch {
       return {};
     }
-  }, IMetadataSchema),
+  }, MetadataSchema),
 });
 
 export type LibSQLDocument = z.infer<typeof LibSQLDocumentSchema>;

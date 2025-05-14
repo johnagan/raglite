@@ -1,12 +1,12 @@
 import { Transform, TransformOptions } from "stream";
-import { type IDocument, IDocumentSchema } from "./IDocument.js";
+import { type IDocument, DocumentSchema } from "./IDocument.js";
 
 export type ILoaderError = {
   doc: IDocument;
   error: Error;
 };
 
-export enum LoaderEvents {
+export enum LoaderEvent {
   COMPLETED = "completed",
   PROCESSED = "processed",
   RECEIVED = "received",
@@ -73,10 +73,10 @@ export class Loader extends Transform {
     try {
       // Add the document to the documents received
       this.received.push(doc);
-      this.emit(LoaderEvents.RECEIVED, doc);
+      this.emit(LoaderEvent.RECEIVED, doc);
 
       // Parse the document
-      const parsedDoc = IDocumentSchema.parse(doc);
+      const parsedDoc = DocumentSchema.parse(doc);
 
       // Test if the document should be processed
       if (!this._test(parsedDoc)) {
@@ -102,7 +102,7 @@ export class Loader extends Transform {
     }
 
     this.processed.push(doc);
-    this.emit(LoaderEvents.PROCESSED, doc);
+    this.emit(LoaderEvent.PROCESSED, doc);
 
     // Push the document to the stream
     return this.push(doc);
@@ -114,7 +114,7 @@ export class Loader extends Transform {
    */
   skip(doc: IDocument) {
     this.skipped.push(doc);
-    this.emit(LoaderEvents.SKIPPED, doc);
+    this.emit(LoaderEvent.SKIPPED, doc);
 
     // Push the document to the stream
     return this.push(doc);
@@ -128,7 +128,7 @@ export class Loader extends Transform {
   error(doc: IDocument, error: unknown) {
     console.error(error);
     this.errors.push(doc);
-    this.emit(LoaderEvents.ERROR, { doc, error });
+    this.emit(LoaderEvent.ERROR, { doc, error });
 
     // Push the document to the stream
     return this.push(doc);
@@ -146,7 +146,7 @@ export class Loader extends Transform {
    * Listen for the documents loaded event.
    * @param listener - The listener to listen for.
    */
-  on(event: LoaderEvents | string, listener: (...args: any[]) => void) {
+  on(event: LoaderEvent | string, listener: (...args: any[]) => void) {
     return super.on(event, listener);
   }
 
@@ -154,7 +154,7 @@ export class Loader extends Transform {
    * Listen for the documents loaded event.
    * @param listener - The listener to listen for.
    */
-  once(event: LoaderEvents | string, listener: (...args: any[]) => void) {
+  once(event: LoaderEvent | string, listener: (...args: any[]) => void) {
     return super.once(event, listener);
   }
 
@@ -163,7 +163,7 @@ export class Loader extends Transform {
    * @param event - The event to emit.
    * @param args - The arguments to emit.
    */
-  emit(event: LoaderEvents | string, ...args: any[]) {
+  emit(event: LoaderEvent | string, ...args: any[]) {
     return super.emit(event, ...args);
   }
 
@@ -172,7 +172,7 @@ export class Loader extends Transform {
    * @param callback - The callback to call when the stream is finalized.
    */
   _final(callback: ILoaderCallback) {
-    this.emit(LoaderEvents.COMPLETED, this.processed);
+    this.emit(LoaderEvent.COMPLETED, this.processed);
     callback();
   }
 

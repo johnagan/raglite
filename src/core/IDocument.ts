@@ -1,39 +1,39 @@
 import { z } from "zod";
 
-export const IContentSchema = z
+export const ContentSchema = z
   .union([z.string(), z.instanceof(Buffer)])
   .describe("The content of the document");
-export type IContent = z.infer<typeof IContentSchema>;
+export type IContent = z.infer<typeof ContentSchema>;
 
-export const IMetadataSchema = z
+export const MetadataSchema = z
   .record(z.string(), z.any())
   .default({})
   .describe("The metadata of the document");
-export type IMetadata = z.infer<typeof IMetadataSchema>;
+export type IMetadata = z.infer<typeof MetadataSchema>;
 
-export const IVectorSchema = z
+export const VectorSchema = z
   .number()
   .array()
   .optional()
   .describe("The vector of the document");
-export type IVector = z.infer<typeof IVectorSchema>;
+export type IVector = z.infer<typeof VectorSchema>;
 
 /**
  * The schema of the loader document record
  */
-export const IDocumentSchema = z.object({
-  content: IContentSchema,
-  metadata: IMetadataSchema,
-  vector: IVectorSchema,
+export const DocumentSchema = z.object({
+  content: ContentSchema,
+  metadata: MetadataSchema,
+  vector: VectorSchema,
 });
 
-export type IDocument = z.infer<typeof IDocumentSchema>;
+export type IDocument = z.infer<typeof DocumentSchema>;
 
 /**
  * The schema of the store record
  */
-export const IRecordSchema = IDocumentSchema.extend({
+export const RecordSchema = DocumentSchema.extend({
   id: z.number().describe("The id of the document"),
 });
 
-export type IRecord = z.infer<typeof IRecordSchema>;
+export type IRecord = z.infer<typeof RecordSchema>;

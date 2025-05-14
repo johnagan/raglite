@@ -1,5 +1,5 @@
 import { describe, beforeAll, it, expect } from "vitest";
-import { type IDocument, LoaderEvents } from "../core";
+import { type IDocument, LoaderEvent } from "../core";
 import { PdfLoader } from "./PdfLoader";
 
 export const TEST_FILE_URL =
@@ -24,7 +24,7 @@ describe("PdfLoader", () => {
     const fakeBuffer = Buffer.from("not a pdf file");
 
     const result: IDocument = await new Promise((resolve) => {
-      pdfLoader.once(LoaderEvents.SKIPPED, (output) => resolve(output));
+      pdfLoader.once(LoaderEvent.SKIPPED, (output) => resolve(output));
       pdfLoader.write({ content: fakeBuffer });
     });
 
@@ -34,7 +34,7 @@ describe("PdfLoader", () => {
 
   it("should load a PDF file without metadata", async () => {
     const result: IDocument = await new Promise((resolve) => {
-      pdfLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      pdfLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       pdfLoader.write({ content: pdfBuffer });
     });
 
@@ -47,7 +47,7 @@ describe("PdfLoader", () => {
     const metadata = { foo: "bar" };
 
     const result: IDocument = await new Promise((resolve) => {
-      pdfLoader.once(LoaderEvents.PROCESSED, (output) => resolve(output));
+      pdfLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       pdfLoader.write({ content: pdfBuffer, metadata });
     });
 

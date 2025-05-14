@@ -1,10 +1,12 @@
 import { LibSQLStore, LibSQLStoreOptionsSchema } from "./stores/LibSQLStore";
 import { OpenAIModelOptionsSchema, OpenAIModel } from "./models/OpenAIModel";
 import type { IContent, IMetadata, IModel, IStore } from "./core";
-import { Pipeline } from "./Pipeline";
+import { Pipeline } from "./core/Pipeline";
 import { z } from "zod";
 
-export const RAGLiteOptionsSchema = LibSQLStoreOptionsSchema.merge(OpenAIModelOptionsSchema);
+export const RAGLiteOptionsSchema = LibSQLStoreOptionsSchema.merge(
+  OpenAIModelOptionsSchema,
+);
 
 export type RAGLiteOptions = z.infer<typeof RAGLiteOptionsSchema>;
 
