@@ -5,6 +5,10 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
  * Loads a PDF document and returns the text content.
  */
 export class PdfLoader extends Loader {
+  constructor() {
+    super();
+  }
+
   /**
    * Transform the data
    * @param doc - The data to transform

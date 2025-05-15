@@ -5,6 +5,10 @@ import mammoth from "mammoth";
  * Loads a Docx document and returns the text content.
  */
 export class DocxLoader extends Loader {
+  constructor() {
+    super();
+  }
+
   /**
    * Transform the data
    * @param doc - The document to transform

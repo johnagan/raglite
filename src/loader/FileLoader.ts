@@ -5,6 +5,10 @@ import { existsSync, readFileSync, statSync } from "fs";
  * A stream that loads a file.
  */
 export class FileLoader extends Loader {
+  constructor() {
+    super();
+  }
+
   /**
    * Transform the document.
    * @param doc - The document to transform.
