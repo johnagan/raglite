@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { Pipeline, LibSQLStore, OpenAIModel } from ".";
+import { LibSQLStore } from "../stores/LibSQLStore";
+import { OpenAIModel } from "../models/OpenAIModel";
+import { Pipeline, load } from "./Pipeline";
 
 import {
   DocxLoader,
@@ -8,7 +10,7 @@ import {
   PdfLoader,
   StoreLoader,
   EmbeddingLoader,
-} from "./loader";
+} from "../loader";
 
 const apiKey = process.env.OPENAI_API_KEY!;
 const databaseUrl = process.env.DATABASE_URL;
@@ -18,7 +20,7 @@ const PDF_URL =
 
 const DOCX_URL = "https://calibre-ebook.com/downloads/demos/demo.docx";
 
-describe("Ragpipe", { timeout: 10000 }, () => {
+describe("Pipeline", { timeout: 10000 }, () => {
   let model: OpenAIModel;
   let store: LibSQLStore;
   let pipeline: Pipeline;
@@ -27,7 +29,7 @@ describe("Ragpipe", { timeout: 10000 }, () => {
     model = new OpenAIModel({ apiKey });
     store = new LibSQLStore({ databaseUrl });
 
-    pipeline = new Pipeline({
+    const config = {
       loaders: [
         new UrlLoader(),
         new FileLoader(),
@@ -36,7 +38,25 @@ describe("Ragpipe", { timeout: 10000 }, () => {
         new EmbeddingLoader(model),
         new StoreLoader(store),
       ],
-    });
+    };
+
+    // Mock the file system
+    vi.mock("fs", () => ({
+      existsSync: vi.fn().mockReturnValue(true),
+      // readFileSync: vi.fn().mockReturnValue(""),
+    }));
+
+    // Mock the import
+    vi.mock("../../ragpipe.config.ts", () => ({
+      default: config,
+    }));
+
+    pipeline = new Pipeline(config);
+  });
+
+  afterEach(() => {
+    vi.unmock("../../ragpipe.config.ts");
+    vi.unmock("fs");
   });
 
   it("should load a PDF from url", async () => {
@@ -80,5 +100,15 @@ describe("Ragpipe", { timeout: 10000 }, () => {
     expect(result[0].content).toBeDefined();
     expect(result[0].metadata).toBeDefined();
     expect(result[0].metadata.title).toBe("Test Document");
+  });
+
+  it("should load a PDF from the load helper", async () => {
+    const result = await load(PDF_URL);
+    expect(result).toBeDefined();
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0].id).toBeDefined();
+    expect(result[0].content).toBeDefined();
+    expect(result[0].vector).toBeDefined();
+    expect(result[0].metadata).toBeDefined();
   });
 });

@@ -44,7 +44,8 @@ export class UrlLoader extends Loader {
       }
 
       // Add the URL to the metadata
-      doc.metadata = { ...doc.metadata, url };
+      const headers = Object.fromEntries(response.headers.entries());
+      doc.metadata = { ...doc.metadata, url, headers };
 
       this.process(doc);
     } catch (error) {
