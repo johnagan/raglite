@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { LoaderEvent, type IDocument, type IStore, type IRecord } from "../core";
+import {
+  LoaderEvent,
+  type IDocument,
+  type IStore,
+  type IRecord,
+} from "../core";
 import { StoreLoader } from "./StoreLoader";
 
 describe("StoreLoader", () => {
@@ -10,14 +15,15 @@ describe("StoreLoader", () => {
     // Mock the IStore implementation
     mockStore = {
       options: {},
-      insert: vi.fn().mockImplementation(async (doc: IDocument): Promise<IRecord> => {
-        return {
-          ...doc,
-          id: 123, // Mock ID assigned by store
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-      }),
+      insert: vi
+        .fn()
+        .mockImplementation(async (doc: IDocument): Promise<IRecord> => {
+          return {
+            ...doc,
+            id: 123, // Mock ID assigned by store
+            createdAt: new Date(),
+          };
+        }),
       getOne: vi.fn(),
       search: vi.fn(),
     };
@@ -32,7 +38,7 @@ describe("StoreLoader", () => {
       vector: [0.1, 0.2, 0.3],
     };
 
-    const processedDoc = await new Promise<IDocument>((resolve) => {
+    const processedDoc = await new Promise<IRecord>((resolve) => {
       storeLoader.once(LoaderEvent.PROCESSED, (doc) => resolve(doc));
       storeLoader.write(inputDoc);
     });
@@ -43,7 +49,6 @@ describe("StoreLoader", () => {
     expect(processedDoc.metadata).toEqual({ source: "test" });
     expect(processedDoc.vector).toEqual([0.1, 0.2, 0.3]);
     expect(processedDoc.createdAt).toBeInstanceOf(Date);
-    expect(processedDoc.updatedAt).toBeInstanceOf(Date);
 
     // Verify store.insert was called with the input document
     expect(mockStore.insert).toHaveBeenCalledWith(inputDoc);
@@ -56,7 +61,7 @@ describe("StoreLoader", () => {
       vector: [0.1, 0.2, 0.3],
     };
 
-    const skippedDoc = await new Promise<IDocument>((resolve) => {
+    const skippedDoc = await new Promise<IRecord>((resolve) => {
       storeLoader.once(LoaderEvent.SKIPPED, (doc) => resolve(doc));
       storeLoader.write(inputDoc);
     });
@@ -99,7 +104,7 @@ describe("StoreLoader", () => {
   it("should handle errors from store.insert", async () => {
     // Mock insert to throw an error
     mockStore.insert = vi.fn().mockRejectedValue(new Error("Insert failed"));
-    
+
     const inputDoc: IDocument = {
       content: "Test document",
       metadata: { source: "test" },
@@ -125,7 +130,7 @@ describe("StoreLoader", () => {
     };
 
     const events: string[] = [];
-    
+
     storeLoader.on(LoaderEvent.RECEIVED, () => events.push("received"));
     storeLoader.on(LoaderEvent.PROCESSED, () => events.push("processed"));
     storeLoader.on(LoaderEvent.COMPLETED, () => events.push("completed"));
@@ -134,7 +139,7 @@ describe("StoreLoader", () => {
       storeLoader.on(LoaderEvent.COMPLETED, () => {
         resolve();
       });
-      
+
       storeLoader.write(inputDoc);
       storeLoader.end();
     });

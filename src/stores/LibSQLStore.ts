@@ -1,7 +1,8 @@
 import {
   type IStore,
   type IDocument,
-  DocumentSchema,
+  type IRecord,
+  RecordSchema,
   MetadataSchema,
   VectorSchema,
 } from "../core";
@@ -15,8 +16,13 @@ const DEFAULT_DIMENSIONS = 1536;
 /**
  * The schema of the document record
  */
-export const LibSQLDocumentSchema = DocumentSchema.extend({
-  id: z.number().describe("The id of the document"),
+export const LibSQLRecordSchema = RecordSchema.extend({
+  createdAt: z.preprocess((val) => {
+    if (typeof val === "string") {
+      return new Date(val);
+    }
+    return val;
+  }, z.date()),
   vector: z.preprocess((val) => {
     try {
       if (typeof val === "string") {
@@ -47,17 +53,7 @@ export const LibSQLDocumentSchema = DocumentSchema.extend({
   }, MetadataSchema),
 });
 
-export type LibSQLDocument = z.infer<typeof LibSQLDocumentSchema>;
-
-/**
- * The schema of a new document record
- */
-export const NewLibSQLDocumentSchema = LibSQLDocumentSchema.omit({
-  id: true,
-  vector: true,
-});
-
-export type NewLibSQLDocument = z.infer<typeof NewLibSQLDocumentSchema>;
+export type LibSQLRecord = z.infer<typeof LibSQLRecordSchema>;
 
 /**
  * The arguments for the LibSQLStore class.
@@ -109,11 +105,15 @@ export class LibSQLStore implements IStore {
    * @param id - The id of the embedding to get.
    * @returns The embedding.
    */
-  async getOne(id: number): Promise<LibSQLDocument> {
+  async getOne(id: number): Promise<IRecord> {
     const { tableName } = this.options;
     const result = await this.client.execute({
       args: [id],
-      sql: `select * from ${tableName} where id = ?`,
+      sql: `
+        select id, created_at as createdAt, metadata, content, e.vector
+        from ${tableName} e
+        where e.id = ?
+      `,
     });
 
     // If the embedding is not found, throw an error
@@ -121,7 +121,7 @@ export class LibSQLStore implements IStore {
       throw new Error("Embedding not found");
     }
 
-    return LibSQLDocumentSchema.parse(result.rows[0]);
+    return LibSQLRecordSchema.parse(result.rows[0]);
   }
 
   /**
@@ -155,14 +155,14 @@ export class LibSQLStore implements IStore {
    * @param results - The number of results to return
    * @returns The most relevant embeddings.
    */
-  async search(vectorQuery: number[], results = 3): Promise<LibSQLDocument[]> {
+  async search(vectorQuery: number[], results = 3): Promise<IRecord[]> {
     const vector = JSON.stringify(vectorQuery);
     const { tableName } = this.options;
 
     const records = await this.client.execute({
       args: [vector, results, vector],
       sql: `
-        select id, metadata, content, e.vector
+        select id, created_at as createdAt, metadata, content, e.vector
         from vector_top_k('${tableName}_idx', vector32(?), ?) i
         join ${tableName} e using (id)
         order by vector_distance_cos(e.vector, vector32(?))
@@ -170,7 +170,7 @@ export class LibSQLStore implements IStore {
     });
 
     // Convert the records to the SearchResult type
-    return records.rows.map((row) => LibSQLDocumentSchema.parse(row));
+    return records.rows.map((row) => LibSQLRecordSchema.parse(row));
   }
 
   /**
@@ -201,7 +201,7 @@ export class LibSQLStore implements IStore {
 
     // Create the table
     await this.client.batch([
-      `CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, metadata TEXT, vector F32_BLOB(${dimensions}))`,
+      `CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, content TEXT, metadata TEXT, vector F32_BLOB(${dimensions}))`,
       `CREATE INDEX ${tableName}_idx ON ${tableName} (libsql_vector_idx(vector))`,
     ]);
   }

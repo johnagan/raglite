@@ -21,8 +21,12 @@ export class StoreLoader extends Loader {
     _encoding: BufferEncoding,
     callback: ILoaderCallback,
   ) {
-    const result = await this.store.insert(doc);
-    this.process(result);
+    try {
+      const result = await this.store.insert(doc);
+      this.process(result);
+    } catch (error) {
+      this.error(doc, error);
+    }
     callback();
   }
 

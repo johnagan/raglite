@@ -82,26 +82,20 @@ describe("Loader", () => {
 
     it("should handle errors and emit error event", async () => {
       const doc: IDocument = { content: "test", metadata: {} };
-      const errorSpy = vi.fn();
-      const error = new Error("Test error");
 
-      // Force an error by making DocumentSchema.parse throw
-      const parseSpy = vi
-        .spyOn(DocumentSchema, "parse")
-        .mockImplementation(() => {
-          throw error;
-        });
-
-      loader.on(LoaderEvent.ERROR, errorSpy);
-
-      await new Promise<void>((resolve) => {
-        loader._write(doc, "utf-8", () => resolve());
+      loader._transform = vi.fn().mockImplementation(() => {
+        throw new Error("Test error");
       });
 
-      expect(loader.errors).toContain(doc);
-      expect(errorSpy).toHaveBeenCalledWith({ doc, error });
+      const errorEvent = await new Promise<any>((resolve) => {
+        loader.once(LoaderEvent.ERROR, (error) => resolve(error));
+        loader.write(doc);
+      });
 
-      parseSpy.mockRestore();
+      expect(errorEvent).toBeDefined();
+      expect(errorEvent.doc).toBeDefined();
+      expect(errorEvent.error).toBeDefined();
+      expect(errorEvent.error.message).toContain("Test error");
     });
   });
 

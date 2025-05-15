@@ -65,17 +65,23 @@ export class Loader extends Transform {
       this.received.push(doc);
       this.emit(LoaderEvent.RECEIVED, doc);
 
-      // Parse the document
-      const parsedDoc = DocumentSchema.parse(doc);
+      // Attempt to parse the document
+      const { success, error, data } = DocumentSchema.safeParse(doc);
 
       // Test if the document should be processed
-      if (!this._test(parsedDoc)) {
+      if (!success || !this._test(data)) {
+        // Log the parsing error
+        if (error) {
+          console.error(error);
+        }
+
         this.skip(doc);
         callback();
-      } else {
-        // Transform the document
-        super._write(parsedDoc, encoding, callback);
+        return;
       }
+
+      // Transform the document
+      super._write(data, encoding, callback);
     } catch (error) {
       this.error(doc, error);
       callback();

@@ -20,13 +20,18 @@ export class EmbeddingLoader extends Loader {
    * @param callback - The callback to call when the document is transformed.
    */
   async _transform(
-    { content, metadata }: IDocument,
+    doc: IDocument,
     _encoding: BufferEncoding,
     callback: ILoaderCallback,
   ) {
-    for await (const chunk of this.model.chunks(content as string)) {
-      const vector = await this.model.embed(chunk);
-      this.process({ content: chunk, metadata, vector });
+    try {
+      const { content, metadata } = doc;
+      for await (const chunk of this.model.chunks(content as string)) {
+        const vector = await this.model.embed(chunk);
+        this.process({ content: chunk, metadata, vector });
+      }
+    } catch (error) {
+      this.error(doc, error);
     }
     callback();
   }

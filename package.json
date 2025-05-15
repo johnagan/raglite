@@ -24,7 +24,7 @@
   },
   "author": "John Agan <johnagan@gmail.com>",
   "license": "MIT",
-  "repository": "https://github.com/johnagan/raglite",
+  "repository": "https://github.com/johnagan/ragpipe",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -42,7 +42,6 @@
   },
   "devDependencies": {
     "@libsql/client": "^0.15.4",
-    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/node": "^20.9.0",
     "dotenv": "^16.5.0",
     "openai": "^4.20.0",

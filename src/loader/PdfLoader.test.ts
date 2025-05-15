@@ -23,7 +23,7 @@ describe("PdfLoader", () => {
   it("should ignore non-PDF files", async () => {
     const fakeBuffer = Buffer.from("not a pdf file");
 
-    const result: IDocument = await new Promise((resolve) => {
+    const result = await new Promise<IDocument>((resolve) => {
       pdfLoader.once(LoaderEvent.SKIPPED, (output) => resolve(output));
       pdfLoader.write({ content: fakeBuffer });
     });
@@ -33,7 +33,7 @@ describe("PdfLoader", () => {
   });
 
   it("should load a PDF file without metadata", async () => {
-    const result: IDocument = await new Promise((resolve) => {
+    const result = await new Promise<IDocument>((resolve) => {
       pdfLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       pdfLoader.write({ content: pdfBuffer });
     });
@@ -46,7 +46,7 @@ describe("PdfLoader", () => {
   it("should attach metadata if provided", async () => {
     const metadata = { foo: "bar" };
 
-    const result: IDocument = await new Promise((resolve) => {
+    const result = await new Promise<IDocument>((resolve) => {
       pdfLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       pdfLoader.write({ content: pdfBuffer, metadata });
     });

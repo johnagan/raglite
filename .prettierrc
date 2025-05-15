@@ -1,7 +1,3 @@
 {
-  "importOrder": [],
-  "printWidth": 80,
-  "importOrderSortSpecifiers": true,
-  "importOrderSortByLength": "desc",
-  "importOrderParserPlugins": ["typescript", "jsx"]
+  "printWidth": 80
 }

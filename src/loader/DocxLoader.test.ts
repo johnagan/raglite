@@ -28,7 +28,7 @@ describe("DocxLoader", () => {
   it("should ignore non-PDF files", async () => {
     const fakeBuffer = Buffer.from("not a docx file");
 
-    const result: IDocument = await new Promise((resolve) => {
+    const result = await new Promise<IDocument>((resolve) => {
       docxLoader.once(LoaderEvent.SKIPPED, (output) => resolve(output));
       docxLoader.write({ content: fakeBuffer });
     });
@@ -38,7 +38,7 @@ describe("DocxLoader", () => {
   });
 
   it("should load a PDF file without metadata", async () => {
-    const result: IDocument = await new Promise((resolve) => {
+    const result = await new Promise<IDocument>((resolve) => {
       docxLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       docxLoader.write({ content: docxBuffer });
     });
@@ -51,7 +51,7 @@ describe("DocxLoader", () => {
   it("should attach metadata if provided", async () => {
     const metadata = { foo: "bar" };
 
-    const result: IDocument = await new Promise((resolve) => {
+    const result = await new Promise<IDocument>((resolve) => {
       docxLoader.once(LoaderEvent.PROCESSED, (output) => resolve(output));
       docxLoader.write({ content: docxBuffer, metadata });
     });

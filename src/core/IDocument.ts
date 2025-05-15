@@ -33,7 +33,8 @@ export type IDocument = z.infer<typeof DocumentSchema>;
  * The schema of the store record
  */
 export const RecordSchema = DocumentSchema.extend({
-  id: z.number().describe("The id of the document"),
+  id: z.number().describe("The id of the record"),
+  createdAt: z.date().describe("The date the record was created"),
 });
 
 export type IRecord = z.infer<typeof RecordSchema>;

@@ -3,6 +3,7 @@ import type { IConfig } from "./IConfig";
 import { LoaderEvent } from "./Loader";
 import { pipeline } from "stream/promises";
 import { Readable } from "stream";
+
 /**
  * A pipeline for loading documents.
  */
