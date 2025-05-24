@@ -29,11 +29,12 @@ import { load, search } from "raglite";
 
 // Load a document from a file path
 const records = await load("path/to/document.pdf");
+
 records; // The chunked records created from the document
-records[0].content; // The content of the document
-records[0].metadata; // The metadata of the document
-records[0].vector; // The vector of the document
-records[0].id; // The database id of the document
+records[0].content; // The content of the document chunk
+records[0].metadata; // The metadata of the document chunk
+records[0].vector; // The vector of the document chunk
+records[0].id; // The database id of the document chunk
 
 // Load a document from a URL
 await load("https://example.com/path/to/document.docx");
@@ -53,6 +54,56 @@ Search for relevant documents:
 const results = await search("What is retrieval-augmented generation?");
 
 console.log(results); // [{ content: "...", metadata: { source: "..." } }, ...]
+```
+
+## Advanced Usage
+
+### Customizing the Pipeline
+
+You can customize the pipeline by passing in your own components.
+
+```ts
+import {
+  Pipeline,
+  UrlLoader,
+  FileLoader,
+  PdfLoader,
+  DocxLoader,
+  EmbeddingLoader,
+  DataStoreLoader,
+} from "raglite";
+
+// Create a writer pipeline
+const writer = new Pipeline([
+  new UrlLoader({
+    headers: {
+      Authorization: `Bearer ${process.env.TOKEN}`,
+    },
+  }), // add fetch request options
+  new FileLoader(),
+  new PdfLoader(),
+  new DocxLoader(),
+  new EmbeddingLoader({
+    model: "sentence-transformers/all-MiniLM-L6-v2",
+    chunkSize: 200,
+    overlap: 10,
+  }), // customize the embedding model
+  new DataStoreLoader({
+    databaseUrl: "path/to/database.db",
+    tableName: "documents",
+    dimensions: 384,
+  }), // customize the data store
+]);
+
+const records = await writer.load("path/to/document.pdf");
+
+// Create a reader pipeline
+const reader = new Pipeline([
+  new EmbeddingLoader(),
+  new DataStoreLoader({ search: true }),
+]);
+
+const results = await reader.search("What is retrieval-augmented generation?");
 ```
 
 ---
