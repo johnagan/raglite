@@ -1,7 +1,9 @@
 {
   "name": "raglite",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "A minimal TypeScript RAG pipeline, built on top of sqlite/libsql, supporting PDF and DOCX",
+  "author": "John Agan <johnagan@gmail.com>",
+  "license": "MIT",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -22,30 +24,22 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "author": "John Agan <johnagan@gmail.com>",
-  "license": "MIT",
   "repository": "https://github.com/johnagan/raglite",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "packageManager": "pnpm@10.10.0",
-  "peerDependencies": {
-    "@libsql/client": "^0.15.4",
-    "openai": "^4.20.0"
-  },
+  "packageManager": "pnpm@10.11.0",
   "dependencies": {
-    "mammoth": "^1.6.0",
+    "@huggingface/transformers": "^3.5.1",
+    "@libsql/client": "^0.15.4",
     "pdfjs-dist": "^5.2.133",
+    "mammoth": "^1.6.0",
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "vite-tsconfig-paths": "^5.1.4",
-    "@libsql/client": "^0.15.4",
     "@types/node": "^20.9.0",
     "typescript": "^5.8.3",
-    "dotenv": "^16.5.0",
-    "openai": "^4.20.0",
     "vitest": "^3.1.3"
   }
 }

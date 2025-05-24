@@ -1,4 +1,3 @@
-export * from "./Document";
-export * from "./BaseLoader";
-export * from "./BaseModel";
-export * from "./BaseVectorStore";
+export * from "./IDocument.js";
+export * from "./Pipeline.js";
+export * from "./Loader.js";
