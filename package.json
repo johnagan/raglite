@@ -5,6 +5,7 @@
   "author": "John Agan <johnagan@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "test": "vitest",
