@@ -1,6 +1,6 @@
 # RAGLite
 
-**RAGLite** is a minimal, TypeScript-first Retrieval-Augmented Generation (RAG) pipeline. It's designed for simplicity, extensibility, and performance, supporting PDF and DOCX ingestion, OpenAI embeddings, and fast vector search using SQLite/LibSQL.
+**RAGLite** is a minimal, TypeScript-first Retrieval-Augmented Generation (RAG) pipeline. It's designed for simplicity, extensibility, and performance, supporting PDF and DOCX ingestion, local embeddings, and fast vector search using SQLite/LibSQL.
 
 ## Features
 
