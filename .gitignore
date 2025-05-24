@@ -15,3 +15,6 @@ dist
 # Data
 data
 *.db
+
+# Build info
+*.tsbuildinfo
