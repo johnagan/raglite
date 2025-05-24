@@ -12,11 +12,9 @@ import {
 
 import { z } from "zod";
 
-const { MODEL, CHUNK_SIZE, OVERLAP } = process.env;
-
-const DEFAULT_MODEL = MODEL || "sentence-transformers/all-MiniLM-L12-v2";
-const DEFAULT_CHUNK_SIZE = Number(CHUNK_SIZE || 200);
-const DEFAULT_OVERLAP = Number(OVERLAP || 0);
+const DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L12-v2";
+const DEFAULT_CHUNK_SIZE = 200;
+const DEFAULT_OVERLAP = 0;
 
 /**
  * The arguments for the LocalModel class.
@@ -26,17 +24,29 @@ export const EmbeddingLoaderOptionsSchema = z.object({
     .string()
     .optional()
     .default(DEFAULT_MODEL)
-    .describe("The model to use for embedding"),
+    .describe("The model to use for embedding")
+    .transform((val) => {
+      const { MODEL } = process.env;
+      return MODEL || val;
+    }),
   chunkSize: z
     .number()
     .optional()
     .default(DEFAULT_CHUNK_SIZE)
-    .describe("The maximum number of words to embed per chunk"),
+    .describe("The maximum number of words to embed per chunk")
+    .transform((val) => {
+      const { CHUNK_SIZE } = process.env;
+      return Number(CHUNK_SIZE || val);
+    }),
   overlap: z
     .number()
     .optional()
     .default(DEFAULT_OVERLAP)
-    .describe("The number of words to overlap between chunks"),
+    .describe("The number of words to overlap between chunks")
+    .transform((val) => {
+      const { OVERLAP } = process.env;
+      return Number(OVERLAP || val);
+    }),
 });
 
 export type EmbeddingLoaderArgs = z.infer<typeof EmbeddingLoaderOptionsSchema>;

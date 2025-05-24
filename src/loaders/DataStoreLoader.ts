@@ -15,11 +15,9 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { z } from "zod";
 
-const { DATABASE_URL, TABLE_NAME, DIMENSIONS } = process.env;
-
-const DEFAULT_DATABASE_URL = DATABASE_URL || "file:data/ragpipe.db";
-const DEFAULT_TABLE_NAME = TABLE_NAME || "embeddings";
-const DEFAULT_DIMENSIONS = Number(DIMENSIONS || 384);
+const DEFAULT_DATABASE_URL = "file:data/ragpipe.db";
+const DEFAULT_TABLE_NAME = "embeddings";
+const DEFAULT_DIMENSIONS = 384;
 
 /**
  * The schema of the document record
@@ -72,17 +70,29 @@ export const LibSQLStoreOptionsSchema = z.object({
     .string()
     .optional()
     .describe("The URL of the database")
-    .default(DEFAULT_DATABASE_URL),
+    .default(DEFAULT_DATABASE_URL)
+    .transform((val) => {
+      const { DATABASE_URL } = process.env;
+      return DATABASE_URL || val;
+    }),
   tableName: z
     .string()
     .optional()
     .describe("The name of the table")
-    .default(DEFAULT_TABLE_NAME),
+    .default(DEFAULT_TABLE_NAME)
+    .transform((val) => {
+      const { TABLE_NAME } = process.env;
+      return TABLE_NAME || val;
+    }),
   dimensions: z.coerce
     .number()
     .optional()
     .describe("The dimensions of the embedding vectors")
-    .default(DEFAULT_DIMENSIONS),
+    .default(DEFAULT_DIMENSIONS)
+    .transform((val) => {
+      const { DIMENSIONS } = process.env;
+      return Number(DIMENSIONS || val);
+    }),
   search: z
     .boolean()
     .optional()
