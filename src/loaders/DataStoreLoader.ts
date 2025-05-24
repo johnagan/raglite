@@ -72,8 +72,7 @@ export const LibSQLStoreOptionsSchema = z.object({
     .describe("The URL of the database")
     .default(DEFAULT_DATABASE_URL)
     .transform((val) => {
-      const { DATABASE_URL } = process.env;
-      return DATABASE_URL || val;
+      return process.env.DATABASE_URL || val;
     }),
   tableName: z
     .string()
@@ -81,8 +80,7 @@ export const LibSQLStoreOptionsSchema = z.object({
     .describe("The name of the table")
     .default(DEFAULT_TABLE_NAME)
     .transform((val) => {
-      const { TABLE_NAME } = process.env;
-      return TABLE_NAME || val;
+      return process.env.TABLE_NAME || val;
     }),
   dimensions: z.coerce
     .number()
@@ -90,8 +88,7 @@ export const LibSQLStoreOptionsSchema = z.object({
     .describe("The dimensions of the embedding vectors")
     .default(DEFAULT_DIMENSIONS)
     .transform((val) => {
-      const { DIMENSIONS } = process.env;
-      return Number(DIMENSIONS || val);
+      return Number(process.env.DIMENSIONS || val);
     }),
   search: z
     .boolean()

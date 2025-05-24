@@ -26,8 +26,7 @@ export const EmbeddingLoaderOptionsSchema = z.object({
     .default(DEFAULT_MODEL)
     .describe("The model to use for embedding")
     .transform((val) => {
-      const { MODEL } = process.env;
-      return MODEL || val;
+      return process.env.MODEL || val;
     }),
   chunkSize: z
     .number()
@@ -35,8 +34,7 @@ export const EmbeddingLoaderOptionsSchema = z.object({
     .default(DEFAULT_CHUNK_SIZE)
     .describe("The maximum number of words to embed per chunk")
     .transform((val) => {
-      const { CHUNK_SIZE } = process.env;
-      return Number(CHUNK_SIZE || val);
+      return Number(process.env.CHUNK_SIZE || val);
     }),
   overlap: z
     .number()
@@ -44,8 +42,7 @@ export const EmbeddingLoaderOptionsSchema = z.object({
     .default(DEFAULT_OVERLAP)
     .describe("The number of words to overlap between chunks")
     .transform((val) => {
-      const { OVERLAP } = process.env;
-      return Number(OVERLAP || val);
+      return Number(process.env.OVERLAP || val);
     }),
 });
 
