@@ -12,6 +12,12 @@ import {
 
 import { z } from "zod";
 
+const { MODEL, CHUNK_SIZE, OVERLAP } = process.env;
+
+const DEFAULT_MODEL = MODEL || "sentence-transformers/all-MiniLM-L12-v2";
+const DEFAULT_CHUNK_SIZE = Number(CHUNK_SIZE || 200);
+const DEFAULT_OVERLAP = Number(OVERLAP || 0);
+
 /**
  * The arguments for the LocalModel class.
  */
@@ -19,17 +25,17 @@ export const EmbeddingLoaderOptionsSchema = z.object({
   model: z
     .string()
     .optional()
-    .default("sentence-transformers/all-MiniLM-L12-v2")
+    .default(DEFAULT_MODEL)
     .describe("The model to use for embedding"),
   chunkSize: z
     .number()
     .optional()
-    .default(200)
+    .default(DEFAULT_CHUNK_SIZE)
     .describe("The maximum number of words to embed per chunk"),
   overlap: z
     .number()
     .optional()
-    .default(0)
+    .default(DEFAULT_OVERLAP)
     .describe("The number of words to overlap between chunks"),
 });
 

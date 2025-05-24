@@ -15,9 +15,11 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { z } from "zod";
 
-const DEFAULT_DATABASE_URL = "file:data/ragpipe.db";
-const DEFAULT_TABLE_NAME = "embeddings";
-const DEFAULT_DIMENSIONS = 384;
+const { DATABASE_URL, TABLE_NAME, DIMENSIONS } = process.env;
+
+const DEFAULT_DATABASE_URL = DATABASE_URL || "file:data/ragpipe.db";
+const DEFAULT_TABLE_NAME = TABLE_NAME || "embeddings";
+const DEFAULT_DIMENSIONS = Number(DIMENSIONS || 384);
 
 /**
  * The schema of the document record

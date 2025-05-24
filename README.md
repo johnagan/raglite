@@ -56,6 +56,19 @@ const results = await search("What is retrieval-augmented generation?");
 console.log(results); // [{ content: "...", metadata: { source: "..." } }, ...]
 ```
 
+## Environment Variables
+
+You can customize the pipeline by passing in your own components.
+
+| Variable       | Default                                   | Description                                    |
+| -------------- | ----------------------------------------- | ---------------------------------------------- |
+| `DATABASE_URL` | `file:data/ragpipe.db`                    | The URL of the SQLite/LibSQL database          |
+| `TABLE_NAME`   | `embeddings`                              | The name of the table to store the embeddings  |
+| `DIMENSIONS`   | `384`                                     | The dimensions of the embeddings               |
+| `MODEL`        | `sentence-transformers/all-MiniLM-L12-v2` | The model to use for embedding                 |
+| `CHUNK_SIZE`   | `200`                                     | The maximum number of words to embed per chunk |
+| `OVERLAP`      | `0`                                       | The number of words to overlap between chunks  |
+
 ## Advanced Usage
 
 ### Customizing the Pipeline
