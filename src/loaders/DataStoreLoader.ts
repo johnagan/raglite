@@ -181,6 +181,10 @@ export class DataStoreLoader extends Loader {
     const { content, metadata, vector } = DocumentSchema.parse(doc);
     const { tableName } = this.options;
 
+    if (typeof content !== "string") {
+      throw new Error("Content must be a string");
+    }
+
     // Create the table and index if they don't exist
     const client = await this.getClient();
     const result = await client.execute({
