@@ -13,7 +13,14 @@ export class PdfLoader extends Loader {
   async _load(doc: IDocument, callback: ILoaderCallback) {
     // Read the PDF from buffer
     const data = new Uint8Array(doc.content as Buffer);
-    const loadingTask = getDocument({ data });
+    const loadingTask = getDocument({
+      data,
+      disableFontFace: true,
+      disableRange: false,
+      disableStream: false,
+      stopAtErrors: true,
+    });
+
     const pdf = await loadingTask.promise;
 
     // Get the metadata from the PDF document
