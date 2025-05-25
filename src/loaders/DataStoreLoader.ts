@@ -134,15 +134,19 @@ export class DataStoreLoader extends Loader {
    * @param callback - The callback to call when the data is transformed
    */
   async _load(doc: IDocument, callback: ILoaderCallback) {
-    if (this.options.search) {
-      const records = await this.search(doc.vector);
-      for (const record of records) {
-        this.process(record);
+    try {
+      if (this.options.search) {
+        const records = await this.search(doc.vector);
+        for (const record of records) {
+          this.process(record);
+        }
+        callback();
+      } else {
+        const record = await this.insert(doc);
+        callback(null, record);
       }
-      callback();
-    } else {
-      const record = await this.insert(doc);
-      callback(null, record);
+    } catch (error) {
+      callback(error as Error);
     }
   }
 
