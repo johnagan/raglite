@@ -15,10 +15,17 @@ export class PdfLoader extends Loader {
     const data = new Uint8Array(doc.content as Buffer);
     const loadingTask = getDocument({
       data,
+      // Disable all font-related features for Node.js
       disableFontFace: true,
       disableRange: false,
       disableStream: false,
-      stopAtErrors: true,
+      stopAtErrors: false,
+      // Node.js specific configurations
+      useSystemFonts: false,
+      standardFontDataUrl: null, // Explicitly disable
+      verbosity: 0, // Reduce console output
+      // Disable worker in Node.js
+      isEvalSupported: false,
     });
 
     const pdf = await loadingTask.promise;
