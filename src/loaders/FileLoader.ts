@@ -11,11 +11,14 @@ export class FileLoader extends Loader {
   _load(doc: IDocument, callback: ILoaderCallback) {
     // Get the file name from the path
     const filePath = doc.content as string;
-    const fileName = filePath.split("/").pop() || "";
 
     // Update the document
     doc.content = readFileSync(filePath);
-    doc.metadata.fileName = fileName;
+    doc.metadata.filePath = filePath;
+    doc.metadata.fileSize = statSync(filePath).size;
+    doc.metadata.fileName = filePath.split("/").pop() || "";
+    doc.metadata.fileType = filePath.split(".").pop() || "";
+    doc.metadata.fileLastModified = statSync(filePath).mtime;
 
     callback(null, doc);
   }
